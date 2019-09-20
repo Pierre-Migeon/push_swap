@@ -1,4 +1,6 @@
 
+#include <stdio.h>
+
 
 int	error(void)
 {
@@ -59,40 +61,48 @@ int	check_sorted(int *stack_a, int stack_size)
 	return (1);
 }
 
-void	swap(int *stack)
+void	swap(int *a, int *b)
 {
-	stack[0] ^= stack[1];
-	stack[1] ^= stack[0];
-	stack[0] ^= stack[1];
+	*a ^= *b;
+	*b ^= *a;
+	*a ^= *b;
 }
 
-void	push(int *stack_a, int *stack_b)
+void	rotate(int *stack, int stack_size)
 {
+	int i;
 
-}
-
-void	rotate(int *stack)
-{
-
-}
-
-
-void	reverse_rotate(int *stack)
-{
-
-
+	i = 0;
+	while (i < stack_size - 1)
+	{
+		swap(&stack[i], &stack[i + 1]);
+		++i;
+	}
 }
 
 
-
-void	push_swap(int *stack_a, int stack_size)
+void	reverse_rotate(int *stack, int stack_size)
 {
+	while(--stack_size > 0)
+		swap(&stack[stack_size], &stack[stack_size - 1]);
+}
 
+int	*push(int *stack, int element, int stack_size)
+{
+	int *out;
+	int i;
 
-
-
-
-
+	if (!(out = (int *)malloc(sizeof(int) * stack_size + 1)))
+		return (0);
+	i = 1;
+	while(i < stack_size + 1)
+	{
+		out[i] = stack[i - 1];
+		i++;
+	}
+	out[0] = element;
+	free(stack);
+	return (out);
 }
 
 int	*to_ints(int argc, char **argv)
