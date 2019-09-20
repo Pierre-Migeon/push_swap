@@ -2,6 +2,23 @@
 
 #include "checker.h"
 
+int	ft_atoi(const char *str)
+{
+	int out;
+	int n;
+
+	out = 0;
+	n = 0;
+	while ((*str >= 9 && *str <= 13) || *str == ' ')
+		str++;
+	if (*str == '-')
+		n = 1;
+	if (*str == '-' || *str == '+')
+		str++;
+	while (*str >= '0' && *str <= '9')
+		out = out * 10 + *(str++) - '0';
+	return (n ? -out : out);
+}
 
 int     ft_strcmp(const char *s1, const char *s2)
 {
@@ -175,27 +192,76 @@ char	**read_commands()
 }
 */
 
+int	check_sorted(int *stack_a, int stack_size)
+{
+	int i;
+
+	i = 0;
+	while (i < stack_size)
+	{
+		if (i > 0)
+			if (stack_a[i] < stack_a[i - 1])
+				return (0);
+		i++;
+	}
+	return (1);
+}
+
+int	*get_stack(int argc, char **argv, int *start_args)
+{
+	int stack_size;
+	int *stack;
+	int i;
+
+	stack_size = (*start_args > 0) ? *start_args - 1 : argc - 1; 
+	if (!(stack = (int *)malloc(sizeof(int) * stack_size)))
+		return (0);
+	i = 0;
+	while (i < stack_size)
+	{
+		stack[i] = ft_atoi(argv[i + 1]);
+		++i;
+	}
+	*start_args = stack_size;
+	return (stack);
+}
+
+void	run_commands(int *stack_a, int *stack_a_size, int *stack
+
+
+
+
+int	perform_sort(char **commands, int *stack_a, int stacka_size)
+{
+	int i;
+	int stack_b_size;
+	int *stack_b;
+	
+
+	i = 0;
+	while (commands[i])
+		run_commands(stack_a, stack_a_size, stack_b, commands[i++]);
+	return (check_sorted(stack_a, stacka_size));
+}
+
+int	grade_it(int i)
+{
+	(i == 1) ? write(1, "OK\n", 3) : write(1, "KO\n", 3);
+	return (0);
+}
+
 int	main(int argc, char **argv)
 {	
 	int start_args;
 	char **commands;
+	int *stack;
 
 	if (argc < 2)
 		return (0);
 	if (!(start_args = check_input(argc, argv)))
 		return (error());
-	if (start_args > 0)
+//	if (start_args > 0)
 		commands = get_commands(argv, start_args, argc);
-	int i = 0;
-	while(start_args < argc)
-	{
-		printf("%s\n", commands[i++]);
-		start_args++;
-	}
-		
-	
-/*	else
-		commands = read_commands();
-*/
-	return (0);
+	stack = get_stack(argc, argv, &start_args);
+	return (grade_it(perform_sort(commands, stack, start_args)));
 }
