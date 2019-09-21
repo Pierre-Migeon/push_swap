@@ -51,60 +51,63 @@ void	swap(int *a, int *b)
 	*a ^= *b;
 }
 
-void	rotate(int *stack, int stack_size)
+void	rotate(int *stack)
 {
 	int i;
 
-	i = 0;
-	while (i < stack_size - 1)
+	i = 1;
+	while (i < stack[0] - 1)
 	{
 		swap(&stack[i], &stack[i + 1]);
 		++i;
 	}
 }
 
-void	reverse_rotate(int *stack, int stack_size)
+void	reverse_rotate(int *stack)
 {
-	while(--stack_size > 0)
+	printf ("Entered reverse rotate function\n");
+	int stack_size = stack[0];
+
+	while(--stack_size > 1)
 		swap(&stack[stack_size], &stack[stack_size - 1]);
 }
 
-
-int	remove_top(int *stack, int *stack_size)
+int	remove_top(int *stack)
 {
 	int out;
 	int i;
 
-	i = 0;
-	out = stack[0];
-	while (i < *stack_size - 1)
+	i = 1;
+	out = stack[1];
+	while (i < stack[0] - 1)
 	{
 		stack[i] = stack[i + 1];
 		i++;
 	}
-	*stack_size -= 1;
+	stack[0] -= 1;
 	return (out);
 }
 
-int	*push(int *stack_source, int *stack_destination, int *stack_s_size, int *stack_d_size)
+int	*push(int *stack_source, int *stack_destination)
 {
 	int *out;
 	int pushed_element;
 	int i;
 
-	if (*stack_s_size == 0)
+	if (stack_source[0] == 1)
 		return (stack_destination);
-	pushed_element = remove_top(stack_source, stack_s_size);
-	if (!(out = (int *)malloc(sizeof(int) * *stack_d_size + 1)))
+	pushed_element = remove_top(stack_source);
+	stack_destination[0] += 1;
+	if (!(out = (int *)malloc(sizeof(int) * stack_destination[0])))
 		return (0);
-	i = 1;
-	while(i < *stack_d_size + 1)
+	out[0] = stack_destination[0];
+	out[1] = pushed_element;
+	i = 2;
+	while(i < stack_destination[0])
 	{
 		out[i] = stack_destination[i - 1];
 		i++;
 	}
-	*stack_d_size += 1;
-	out[0] = pushed_element;
 	free(stack_destination);
 	return (out);
 }
@@ -179,7 +182,7 @@ int	command_to_int(char *operation)
 	if (!(ft_strcmp("ra", operation)))
 		return (1);
 	if (!(ft_strcmp("rra", operation)))
-        	return (2);
+    return (2);
 	if (!(ft_strcmp("sb", operation)))
 	 	return (3);
 	if (!(ft_strcmp("rb", operation)))
@@ -189,13 +192,13 @@ int	command_to_int(char *operation)
 	if (!(ft_strcmp("pa", operation)))
 		return (6);
 	if (!(ft_strcmp("pb", operation)))
-        	return (7);
+    return (7);
 	if (!(ft_strcmp("ss", operation)))
 		return (8);
 	if (!(ft_strcmp("rr", operation)))
-        	return (9);
+    return (9);
 	if (!(ft_strcmp("rrr", operation)))
-        	return (10);
+    return (10);
 	return (0);
 }
 
@@ -231,16 +234,16 @@ char	**read_commands()
 }
 */
 
-int	check_sorted(int *stack_a, int stack_size, int stack_b_size)
+//edited for the first element being the size of the stack;
+int	check_sorted(int *stack_a, int stack_b_size)
 {
 	int i;
 
-	if (stack_b_size > 0)
+	if (stack_b_size > 1)
 		return (0);
-	i = 0;
-	while (i < stack_size)
+	i = 2;
+	while (i < stack_a[0])
 	{
-		if (i > 0)
 			if (stack_a[i] < stack_a[i - 1])
 				return (0);
 		i++;
@@ -248,87 +251,97 @@ int	check_sorted(int *stack_a, int stack_size, int stack_b_size)
 	return (1);
 }
 
-int	*get_stack(int argc, char **argv, int *start_args)
+//edited for the first element being the size of the stack;
+int	*get_stack(int argc, char **argv, int start_args)
 {
 	int stack_size;
 	int *stack;
 	int i;
 
-	stack_size = (*start_args > 0) ? *start_args - 1 : argc - 1;
+	stack_size = (start_args > 0) ? start_args : argc;
 	if (!(stack = (int *)malloc(sizeof(int) * stack_size)))
 		return (0);
-	//stack[0] = stack_size;
-	i = 0;
-	while (i < stack_size)
+	stack[0] = stack_size;
+	i = 1;
+	while (i < stack[0])
 	{
-		stack[i] = ft_atoi(argv[i + 1]);
+		stack[i] = ft_atoi(argv[i]);
 		++i;
 	}
-	*start_args = stack_size;
 	return (stack);
 }
 
-void	run_command(int command, int *stack, int stack_size)
+void	run_command(int command, int *stack)
 {
 	void	(*f_point[11])();
 
-	if (stack_size == 0)
+	if (stack[0] < 3)
 		return;
 
 	f_point[0] = swap;
 	f_point[1] = rotate;
 	f_point[2] = reverse_rotate;
 	f_point[8] = swap;
-        f_point[9] = rotate;
-        f_point[10] = reverse_rotate;
-
+  f_point[9] = rotate;
+  f_point[10] = reverse_rotate;
 	if (command == 0)
-		(f_point[command])(&stack[0], &stack[1]);
+		(f_point[command])(&stack[1], &stack[2]);
 	else
-		(f_point[command])(stack, stack_size);
+		(f_point[command])(stack);
 }
 
-void	print_stack(int *stack, int stack_size)
+void	print_stack(int *stack)
 {
 	int i;
 
-	i = 0;
-	while (i < stack_size)
+	i = 1;
+	while (i < stack[0])
 	{
 		printf ("%i, ", stack[i]);
 		++i;
 	}
+	printf("Stack length is %i", stack[0]);
 	printf ("\n");
 }
 
-int	perform_sort(int *commands, int *stack_a, int *stack_a_size)
+int	*intialize_stack_b(void)
+{
+	int *out;
+
+	if (!(out = (int *)malloc(sizeof(int) * 1)))
+		return (0);
+	out[0] = 1;
+	return (out);
+}
+
+int	perform_sort(int *commands, int *stack_a)
 {
 	int i;
-	int stack_b_size = 0;
-	int *stack_b = NULL;
+	int *stack_b;
 
+	stack_b = intialize_stack_b();
 	i = 1;
 	while (i < commands[0])
 	{
 		if (commands[i] < 3)
-			run_command(commands[i], stack_a, *stack_a_size);
-		if (commands[i] > 2 && commands[i] < 6 && stack_b_size > 1)
-			run_command(commands[i], stack_b, stack_b_size);
+			run_command(commands[i], stack_a);
+		if (commands[i] > 2 && commands[i] < 6)
+			run_command(commands[i], stack_b);
 		if (commands[i] == 6)
-			stack_a = push(stack_b, stack_a, &stack_b_size, stack_a_size);
+			stack_a = push(stack_b, stack_a);
 		if (commands[i] == 7)
-			stack_b = push(stack_a, stack_b, stack_a_size, &stack_b_size);
+			stack_b = push(stack_a, stack_b);
 		if (commands[i] > 7)
 		{
-			run_command(commands[i], stack_a, *stack_a_size);
-			run_command(commands[i], stack_b, stack_b_size);
+			run_command(commands[i], stack_a);
+			run_command(commands[i], stack_b);
 		}
 		printf ("-----------------\n");
-		print_stack(stack_a, *stack_a_size);
-		print_stack(stack_b, stack_b_size);
+		print_stack(stack_a);
+		print_stack(stack_b);
 		i++;
 	}
-	return (check_sorted(stack_a, *stack_a_size, stack_b_size));
+	return (check_sorted(stack_a, stack_b[0]));
 }
 
 int	grade_it(int i)
@@ -349,6 +362,6 @@ int	main(int argc, char **argv)
 		return (error());
 //	if (start_args > 0)
 		commands = get_commands(argv, start_args, argc);
-	stack = get_stack(argc, argv, &start_args);
-	return (grade_it(perform_sort(commands, stack, &start_args)));
+	stack = get_stack(argc, argv, start_args);
+	return (grade_it(perform_sort(commands, stack)));
 }
