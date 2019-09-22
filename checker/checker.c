@@ -1,49 +1,5 @@
 #include "checker.h"
 
-int	ft_atoi(const char *str)
-{
-	int out;
-	int n;
-
-	out = 0;
-	n = 0;
-	while ((*str >= 9 && *str <= 13) || *str == ' ')
-		str++;
-	if (*str == '-')
-		n = 1;
-	if (*str == '-' || *str == '+')
-		str++;
-	while (*str >= '0' && *str <= '9')
-		out = out * 10 + *(str++) - '0';
-	return (n ? -out : out);
-}
-
-int     ft_strcmp(const char *s1, const char *s2)
-{
-        while(*s1 && *s2 && *((unsigned char *)s1) == *((unsigned char *)s2))
-	{
-		s1++;
-		s2++;
-	}
-        return (*((unsigned char *)s1) - *((unsigned char *)s2));
-}
-
-size_t	ft_strlen(const char *s)
-{
-	return (*s ? 1 + ft_strlen(++s) : 0);
-}
-
-char	*ft_strcpy(char	*dst, const char *src)
-{
-	int i;
-
-	i = -1;
-	while(src[++i])
-		*(dst + i) = *(src + i);
-	*(dst + i) = '\0';
-	return (dst);
-}
-
 void	swap(int *a, int *b)
 {
 	*a ^= *b;
@@ -115,7 +71,7 @@ int	*push(int *stack_source, int *stack_destination)
 int	error(void)
 {
 	write(1, "error\n", 6);
-	return (1);
+	return (0);
 }
 
 int	check_int(char *str)
@@ -218,23 +174,24 @@ int	*get_commands(char **argv, int start_args, int argc)
 	return (out);
 }
 
-/*
-char	**read_commands()
+int	*read_commands()
 {
-	int bits_read;
-	char temp[3];
-	char *out;
+	int *commands;
+	int r;
+	char *line;
 
-	while ((bits_read = read(0, temp, 3)) > 0)
-        {
-                temp[2] = '\0';
+	while ((r = get_next_line(0, &line)) == 0)
+		;
+	while ((r = get_next_line(0, &line)) > 0)
+	{
+		if (!(is_command(line)))
+                        error();
+		
+	}
 
-        }
-	return (out);
+	return (commands);	
 }
-*/
 
-//edited for the first element being the size of the stack;
 int	check_sorted(int *stack_a, int stack_b_size)
 {
 	int i;
@@ -251,7 +208,6 @@ int	check_sorted(int *stack_a, int stack_b_size)
 	return (1);
 }
 
-//edited for the first element being the size of the stack;
 int	*get_stack(int argc, char **argv, int start_args)
 {
 	int stack_size;
@@ -273,17 +229,17 @@ int	*get_stack(int argc, char **argv, int start_args)
 
 void	run_command(int command, int *stack)
 {
-	void	(*f_point[11])();
+	void	(*f_point[3])();
+        f_point[0] = swap;
+        f_point[1] = rotate;
+        f_point[2] = reverse_rotate;
 
 	if (stack[0] < 3)
 		return;
-
-	f_point[0] = swap;
-	f_point[1] = rotate;
-	f_point[2] = reverse_rotate;
-	f_point[8] = swap;
-  f_point[9] = rotate;
-  f_point[10] = reverse_rotate;
+	if (command > 2 && command < 6)
+		command -= 3;
+	else if (command > 7)
+		command -= 8;
 	if (command == 0)
 		(f_point[command])(&stack[1], &stack[2]);
 	else
@@ -360,8 +316,10 @@ int	main(int argc, char **argv)
 		return (0);
 	if (!(start_args = check_input(argc, argv)))
 		return (error());
-//	if (start_args > 0)
+	if (start_args > 0)
 		commands = get_commands(argv, start_args, argc);
+	else
+		commands = read_commands();
 	stack = get_stack(argc, argv, start_args);
 	return (grade_it(perform_sort(commands, stack)));
 }
