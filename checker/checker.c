@@ -21,7 +21,6 @@ void	rotate(int *stack)
 
 void	reverse_rotate(int *stack)
 {
-	printf ("Entered reverse rotate function\n");
 	int stack_size = stack[0];
 
 	while(--stack_size > 1)
@@ -68,10 +67,10 @@ int	*push(int *stack_source, int *stack_destination)
 	return (out);
 }
 
-int	error(void)
-{
-	write(1, "error\n", 6);
-	return (0);
+void    error(void)
+{       
+        write(1, "Error\n", 6);
+        exit (0);
 }
 
 int	check_int(char *str)
@@ -174,37 +173,141 @@ int	*get_commands(char **argv, int start_args, int argc)
 	return (out);
 }
 
-int	*read_commands()
+
+void	chomp(char *str)
 {
-	int *commands;
-	int r;
-	char *line;
-
-	while ((r = get_next_line(0, &line)) == 0)
-		;
-	while ((r = get_next_line(0, &line)) > 0)
-	{
-		if (!(is_command(line)))
-                        error();
-		
-	}
-
-	return (commands);	
+	int len;
+	
+	len = ft_strlen(str);
+	if (str[len - 2] == ' ')
+		str[len - 2] = '\0';
+	else
+		str[--len] = '\0';
 }
 
-int	check_sorted(int *stack_a, int stack_b_size)
+t_listy *new_lst(char *str)
+{       
+	t_listy	*new;
+
+	chomp(str);
+	if(!(new = (t_listy *)malloc(sizeof(t_listy) * 1)))
+        	return (0);
+	new->str = ft_strdup(str);
+	new->next = NULL;
+	new->list_count = 1;
+ 	return (new);
+}
+
+t_listy	*push_head(t_listy *head, char *str)
+{
+	t_listy	*first;
+
+	if (!head)
+	{
+		head = new_lst(str);
+		return (head);
+	}
+	first = head;
+	head->list_count++;
+	while(head->next)
+		head = head->next;		
+	head->next = new_lst(str);
+	return (first);
+}
+
+void	add_char(char temp[6], char *c)
 {
 	int i;
 
-	if (stack_b_size > 1)
+	i = 0;
+	while (temp[i])
+		i++;
+	temp[i + 1] = '\0';
+	while(i > 0)
+	{
+		temp[i] = temp[i - 1];
+		i--;	
+	}
+	temp[0] = *c;
+	*c = '\0';
+}
+
+int	*generate_commands(t_listy *head)
+{
+	t_listy	*last;
+	int	*out;
+	int 	i;
+
+	i = 1;
+	if (!(out =(int *)malloc(sizeof(int) * head->list_count + 1)))
+		return (0);
+	out[0] = head->list_count + 1;
+	while(head)
+	{
+		out[i++] = command_to_int(head->str);
+		last = head;
+		head = head->next;
+		free(last);
+	}
+	return (out);
+}
+
+int	*generate_zero()
+{
+	int *zero;
+
+	if (!(zero = (int *)malloc(sizeof(int))))
+		error();
+	zero[0] = 1;
+	return (zero);
+}
+
+int	*read_commands(int *commands)
+{
+	int 		bytes_read;
+	char 		temp[6];
+	char		line[2];
+	t_listy		*head = NULL;
+
+	while ((bytes_read = read(0, temp, 1)) == 0)
+		;
+	read_error(bytes_read);
+	line[0] = temp[0];
+	while (temp[0] != '\n')
+	{
+		bytes_read = read(0, temp, 5);
+		read_error(bytes_read);
+		temp[bytes_read] = '\0';
+		if (line[0] != '\0')
+			add_char(temp, &line[0]);
+		if (!(temp[0] == '\n') && (ft_strlen(temp) > 4 || ft_strlen(temp) < 3))
+			error();
+		if (temp[0] != '\n')
+			head = push_head(head, temp);
+	}
+	commands = (line[0] == '\n') ? generate_zero() : generate_commands(head);
+	return (commands);
+}
+
+int	check_sorted(int *stack_a, int *stack_b)
+{
+	int i;
+
+	if (stack_b[0] > 1)
 		return (0);
 	i = 2;
 	while (i < stack_a[0])
 	{
 			if (stack_a[i] < stack_a[i - 1])
+			{
+				free(stack_a);
+				free(stack_b);
 				return (0);
+			}
 		i++;
 	}
+	free(stack_a);
+	free(stack_b);
 	return (1);
 }
 
@@ -292,17 +395,17 @@ int	perform_sort(int *commands, int *stack_a)
 			run_command(commands[i], stack_a);
 			run_command(commands[i], stack_b);
 		}
-		printf ("-----------------\n");
-		print_stack(stack_a);
-		print_stack(stack_b);
 		i++;
 	}
-	return (check_sorted(stack_a, stack_b[0]));
+	return (check_sorted(stack_a, stack_b));
 }
 
-int	grade_it(int i)
+int	grade_it(int i, int from_STDIN)
 {
-	(i == 1) ? write(1, "OK\n", 3) : write(1, "KO\n", 3);
+	if (from_STDIN == 0)
+		(i == 1) ? write(1, "OK\n", 3) : write(1, "KO\n", 3);
+	else 
+		(i == 1) ? write(1, "\33[AOK\n", 6) : write(1, "\33[AKO\n", 6);
 	return (0);
 }
 
@@ -311,15 +414,22 @@ int	main(int argc, char **argv)
 	int start_args;
 	int *commands;
 	int *stack;
+	int from_STDIN;
 
 	if (argc < 2)
 		return (0);
 	if (!(start_args = check_input(argc, argv)))
-		return (error());
+		error();
 	if (start_args > 0)
+	{	
+		from_STDIN = 0;	
 		commands = get_commands(argv, start_args, argc);
+	}
 	else
-		commands = read_commands();
+	{
+		from_STDIN = 1;
+		commands = read_commands(commands);
+	}
 	stack = get_stack(argc, argv, start_args);
-	return (grade_it(perform_sort(commands, stack)));
+	return (grade_it(perform_sort(commands, stack), from_STDIN));
 }
