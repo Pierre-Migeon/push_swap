@@ -1,42 +1,43 @@
 
 #include "push_swap.h"
+# define MAX_DEPTH 8
 
 void    swap(int *a, int *b)
-{       
+{
         *a ^= *b;
         *b ^= *a;
         *a ^= *b;
 }
 
 void    rotate(int *stack)
-{       
+{
         int i;
-        
+
         i = 1;
         while (i < stack[0] - 1)
-        {       
+        {
                 swap(&stack[i], &stack[i + 1]);
                 ++i;
         }
 }
 
 void    reverse_rotate(int *stack)
-{       
+{
         int stack_size = stack[0];
-        
+
         while(--stack_size > 1)
                 swap(&stack[stack_size], &stack[stack_size - 1]);
 }
 
 int     remove_top(int *stack)
-{       
+{
         int out;
         int i;
-        
+
         i = 1;
         out = stack[1];
         while (i < stack[0] - 1)
-        {       
+        {
                 stack[i] = stack[i + 1];
                 i++;
         }
@@ -45,11 +46,11 @@ int     remove_top(int *stack)
 }
 
 int     *push(int *stack_source, int *stack_destination)
-{       
+{
         int *out;
         int pushed_element;
         int i;
-        
+
         if (stack_source[0] == 1)
                 return (stack_destination);
         pushed_element = remove_top(stack_source);
@@ -97,12 +98,12 @@ int	check_seen(char **argv, int i)
 }
 
 int     check_input(int argc, char **argv)
-{       
+{
         int i;
-        
+
         i = 1;
         while (i < argc)
-        {       
+        {
                 if (!(check_int(argv[i])))
                         return (1);
                 if (check_seen(argv, i))
@@ -113,14 +114,14 @@ int     check_input(int argc, char **argv)
 }
 
 int     check_sorted(int *stack_a, int *stack_b)
-{       
+{
         int i;
-        
+
         if (stack_b[0] > 1)
                 return (0);
         i = 2;
         while (i < stack_a[0])
-        {               
+        {
 		if (stack_a[i] < stack_a[i - 1])
 			return (0);
                 i++;
@@ -129,16 +130,16 @@ int     check_sorted(int *stack_a, int *stack_b)
 }
 
 int     *get_stack(int argc, char **argv)
-{       
+{
         int *stack;
         int i;
-        
+
         if (!(stack = (int *)malloc(sizeof(int) * argc)))
                 return (0);
         stack[0] = argc;
         i = 1;
         while (i < stack[0])
-        {       
+        {
                	stack[i] = ft_atoi(argv[i]);
                 ++i;
         }
@@ -146,9 +147,9 @@ int     *get_stack(int argc, char **argv)
 }
 
 int     *initialize_stack(void)
-{       
+{
         int *out;
-        
+
         if (!(out = (int *)malloc(sizeof(int) * 1)))
                 return (0);
         out[0] = 1;
@@ -172,9 +173,9 @@ int	check_previous_swaps(int *stack_a, int *stack_b, int *commands)
 
 int	check_push_prerequisites(int i, int *stack_a, int *stack_b)
 {
-	if (i == 6 && stack_b[0] == 1)
+	if (i == 6 && stack_b[0] < 2)
 		return (0);
-	if (i == 7 && stack_a[0] == 1)
+	if (i == 7 && stack_a[0] < 2)
 		return (0);
 	return (1);
 }
@@ -225,9 +226,9 @@ int	can_do_action(int i, int *stack_a, int *stack_b, int *commands)
 {
 	if (commands[0] > 1)
 	{
-		if (i == 0 && commands[commands[0] - 1] == 0)
+		if (i == 0 && (commands[commands[0] - 1] == 0 || stack_a[0] < 3))
 			return (0);
-		if (i == 3 && commands[commands[0] - 1] == 3)
+		if (i == 3 && (commands[commands[0] - 1] == 3 || stack_b[0] < 3))
 			return (0);
 	}
 	if (i == 8 && check_previous_swaps(stack_a, stack_b, commands))
@@ -252,7 +253,8 @@ void	print_array(int *array)
 
 	i = 1;
 	while (i < array[0])
-		printf ("command is %i\n", array[i++]);
+		printf ("%i ", array[i++]);
+	printf ("\n");
 }
 
 int	*push_end(int *commands, int option)
@@ -272,62 +274,144 @@ int	*push_end(int *commands, int option)
 }
 
 void    run_command(int command, int *stack)
-{       
+{
         void    (*f_point[3])();
         f_point[0] = swap;
         f_point[1] = rotate;
         f_point[2] = reverse_rotate;
-        
+
         if (stack[0] < 3)
-                return; 
+                return;
         if (command > 2 && command < 6)
                 command -= 3;
         else if (command > 7)
                 command -= 8;
         if (command == 0)
                 (f_point[command])(&stack[1], &stack[2]);
-        else    
+        else
                 (f_point[command])(stack);
 }
 
-void	perform_operation(int *stack_a, int *stack_b, int command)
+void	perform_operation(int **stack_a, int **stack_b, int command)
 {
 	if (command < 3)
-		run_command(command, stack_a);
+		run_command(command, *stack_a);
         if (command > 2 && command < 6)
-                run_command(command, stack_b);
+                run_command(command, *stack_b);
         if (command == 6)
-                stack_a = push(stack_b, stack_a);
+                *stack_a = push(*stack_b, *stack_a);
         if (command == 7)
-                stack_b = push(stack_a, stack_b);
+                *stack_b = push(*stack_a, *stack_b);
         if (command > 7)
         {
-        	run_command(command, stack_a);
-        	run_command(command, stack_b);
+        	run_command(command, *stack_a);
+        	run_command(command, *stack_b);
         }
 }
 
-void	r_push_swap(int *stack_a, int *stack_b, int *commands)
+
+void	reverse_operation(int **stack_a, int **stack_b, int command)
 {
-	int options[11] = {0,1,2,3,4,5,6,7,8,9,10};
+	if (command == 0)
+		swap(((*stack_a) + 1), ((*stack_a) + 2));
+	if (command == 1)
+		run_command(2, *stack_a);
+	if (command == 2)
+		run_command(1, *stack_a);
+	if (command == 3)
+		swap(((*stack_b) + 1), ((*stack_b) + 2));
+	if (command == 4)
+		run_command(5, *stack_b);
+	if (command == 5)
+		run_command(4, *stack_b);
+	if (command == 6)
+		*stack_b = push(*stack_a, *stack_b);
+	if (command == 7)
+		*stack_a = push(*stack_b, *stack_a);
+	if (command == 8)
+	{
+		run_command(8, *stack_a);
+		run_command(8, *stack_b);
+	}
+	if (command == 9)
+	{
+		run_command(10, *stack_a);
+		run_command(10, *stack_b);
+	}
+	if (command == 10)
+	{
+		run_command(9, *stack_a);
+                run_command(9, *stack_b);
+	}
+}
+
+
+
+char	*command_convert(int i)
+{
+	if (i == 0)
+		return ("sa\n");
+	if (i == 1)
+		return ("ra\n");
+	if (i == 2)
+		return ("rra\n");
+	if (i == 3)
+		return ("sb\n");
+	if (i == 4)
+		return ("rb\n");
+	if (i == 5)
+		return ("rrb\n");
+	if (i == 6)
+		return ("pa\n");
+	if (i == 7)
+		return ("pb\n");
+	if (i == 8)
+		return ("ss\n");
+	if (i == 9)
+		return ("rr\n");
+	if (i == 10)
+		return ("rrr\n");
+	return ("Error\n");
+}
+
+void	ints_to_commands(int *commands)
+{
 	int i;
 
-	// perform the last command on the stacks:
-	perform_operation(stack_a, stack_b, commands[commands[0] - 1]);
-	// Base-case:
-	if (check_sorted(stack_a, stack_b))
+	i = 1;
+	while (i < commands[0])
+		ft_putstr(command_convert(commands[i++]));
+}
+
+void	r_push_swap(int **stack_a, int **stack_b, int **commands) //, int max_depth)
+{
+	int 		i;
+	static int 	depth = 0;
+
+	depth++;
+	if (depth == MAX_DEPTH)
+		return;
+	if (check_sorted(*stack_a, *stack_b))
 	{
-		print_array (commands);	
+		if ((*(commands))[0] == 1)
+			ints_to_commands(*commands);
+		else if
+
+		
 		exit(0);
 	}
-	// run through the array of possible actions:
 	i = 0;
-	while (i < 12)
+	while (i < 11)
 	{
-		if (can_do_action(i, stack_a, stack_b, commands))
-		commands = push_end(commands, options[i]);
-		r_push_swap(stack_a, stack_b, commands);
-		commands[0] -= 1;
+		if (can_do_action(i, *stack_a, *stack_b, *commands))
+		{
+			*commands = push_end(*commands, i);
+			perform_operation(stack_a, stack_b, (*(commands))[(*(commands))[0] - 1]);
+			r_push_swap(stack_a, stack_b, commands);
+			depth--;
+			reverse_operation(stack_a, stack_b, (*(commands))[(*(commands))[0] - 1]);
+			(*(commands))[0] -= 1;
+		}
 		i++;
 	}
 }
@@ -336,21 +420,33 @@ void	push_swap(int *stack_a)
 {
 	int	*stack_b;
 	int	*commands;
+	//int	max_depth;
 
+	//max_depth = 2;
 	stack_b = initialize_stack();
 	commands = initialize_stack();
 	if (check_sorted(stack_a, stack_b))
 		return;
-	r_push_swap(stack_a, stack_b, commands);
-
+	r_push_swap(&stack_a, &stack_b, &commands);
 }
 
 int	main(int argc, char **argv)
 {
-	if (argc < 2)
+	int *test;
+	test = (int *)malloc(sizeof(int) * 7);
+	test[0] = 7;
+	test[1] = 2;
+  	test[2] = 1;
+  	test[3] = 3;
+  	test[4] = 6;
+  	test[5] = 8;
+  	test[6] = 5;
+
+	if (argc < 2 || !argv)
 		error();
-	if (check_input(argc, argv))
-		error();
-	push_swap(get_stack(argc, argv));
+	//if (check_input(argc, argv))
+	//	error();
+//	push_swap(get_stack(argc, argv));
+	push_swap(test);
 	return (0);
 }
