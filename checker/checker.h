@@ -12,12 +12,15 @@
 
 # define read_error(i) (i < 0) ? error() : 0;
 
-typedef struct  s_listy
+
+typedef struct  	s_listy
 {
-        char *str;
-        int list_count;
-        struct s_listy *next;
-}       t_listy;
+        char 		*str;
+        int 		list_count;
+	int 		piped_in;
+        struct s_listy	*next;
+}       		t_listy;
+
 
 void	swap(int *a, int *b);
 void	rotate(int *stack);

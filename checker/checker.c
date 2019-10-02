@@ -183,7 +183,6 @@ int	*get_commands(char **argv, int start_args, int argc)
 	return (out);
 }
 
-
 void	chomp(char *str)
 {
 	int len;
@@ -202,8 +201,6 @@ int	non_char(char *str)
 			return (1);
 	return (0);
 }
-
-
 
 t_listy *new_lst(char *str)
 {       
@@ -236,23 +233,6 @@ t_listy	*push_head(t_listy *head, char *str)
 	return (first);
 }
 
-void	add_char(char temp[6], char *c)
-{
-	int i;
-
-	i = 0;
-	while (temp[i])
-		i++;
-	temp[i + 1] = '\0';
-	while(i > 0)
-	{
-		temp[i] = temp[i - 1];
-		i--;	
-	}
-	temp[0] = *c;
-	*c = '\0';
-}
-
 int	*generate_commands(t_listy *head)
 {
 	t_listy	*last;
@@ -260,7 +240,7 @@ int	*generate_commands(t_listy *head)
 	int 	i;
 
 	i = 1;
-	if (!(out =(int *)malloc(sizeof(int) * head->list_count + 1)))
+	if (!(out = (int *)malloc(sizeof(int) * head->list_count + 1)))
 		return (0);
 	out[0] = head->list_count + 1;
 	while(head)
@@ -291,10 +271,7 @@ int	*read_commands(int *commands)
 	t_listy		*head = NULL;
 	int		i;
 
-        i = 1;
-        while((bytes_read = read(0, line, 1)) == 0 && !(line[3] = '\0'))
-                ;
-        read_error(bytes_read);
+        i = 0;
         while (((bytes_read = read(0, temp, 1)) >= 0) && !(temp[1] = '\0'))
         {       
                 if (temp[0] != '\n' && i < 3)
@@ -428,7 +405,7 @@ int	grade_it(int i, int from_STDIN)
 {
 	if (from_STDIN == 0)
 		(i == 1) ? write(1, "OK\n", 3) : write(1, "KO\n", 3);
-	else 
+	else
 		(i == 1) ? write(1, "\33[AOK\n", 6) : write(1, "\33[AKO\n", 6);
 	return (0);
 }

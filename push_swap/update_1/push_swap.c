@@ -322,6 +322,8 @@ void	perform_operation(int **stack_a, int **stack_b, int command)
         	run_command(command, *stack_a);
         	run_command(command, *stack_b);
         }
+	print_array(*stack_a);
+	print_array(*stack_b);
 }
 
 void	reverse_operation(int **stack_a, int **stack_b, int command)
@@ -485,6 +487,92 @@ void	r_push_swap(int **stack_a, int **stack_b, int **commands, int max_depth)
 	}
 }
 
+void	prepare_for_push(int **stack_a, int **stack_b, int new_value)
+{
+	int i = 1;
+	int insertion_point;
+	int reference;
+
+	insertion_point = 0;
+	//if it's already the biggest value, then don't touch array B
+	if (new_value > *(*(stack_b) + 1))
+		return;
+	//find out where it fits:
+	while (i < **stack_b)
+	{
+		if (*(*(stack_b) + i) < new_value) 
+		{
+			insertion_point = 1;
+			break;
+		}
+		i++;
+	}
+	reference = *(*(stack_b) + i);
+	if (insertion_point)
+	{
+		if (i - 1 <= **stack_b - i)
+			while (*(*(stack_b) + 1) != reference)
+				perform_operation(stack_a, stack_b, 4);
+		else
+			while (*(*(stack_b) + 1) != reference)
+                                perform_operation(stack_a, stack_b, 5);
+	}
+}
+
+void	rotate_back_normal(int **stack_a, int **stack_b)
+{
+	int i;
+	int max;
+	int max_i;
+
+	if (**stack_b < 3)
+		return ;
+	i = 1;
+	max = *(*(stack_b) + 1);
+	max_i = 1;
+	while (i < *(*(stack_b)))
+	{
+		if (*(*(stack_b) + i) > max)
+		{
+			max_i = i;
+			max = *(*(stack_b) + i);
+		}		
+		i++;
+	}
+	if (max_i - 1 <= **stack_b - max_i)
+		while (*(*(stack_b) + 1) != max)
+			perform_operation(stack_a, stack_b, 4);
+	else
+		while (*(*(stack_b) + 1) != max)
+			perform_operation(stack_a, stack_b, 5);
+}
+
+void	push_swap_two(int **stack_a, int **stack_b, int **commands)
+{
+	while (!(check_sorted(*stack_a, *stack_b)))
+	{
+		//Swap a if it helps or swap both if you can
+		if (**stack_a > 2 && *(*(stack_a) + 1) > *(*(stack_a) + 2))
+		{
+			if (*(*(stack_b) + 1) < *(*(stack_b) + 2))
+				perform_operation(stack_a, stack_b, 8);
+			else
+				perform_operation(stack_a, stack_b, 0);
+		}
+		//or just swap B if it helps
+		if (**stack_b > 2 && (*(*(stack_b) + 1) < *(*(stack_b) + 2)))
+			perform_operation(stack_a, stack_b, 3);
+		//push onto b
+		prepare_for_push(stack_a, stack_b, (*(stack_a))[1]);
+		perform_operation(stack_a, stack_b, 7);
+		rotate_back_normal(stack_a, stack_b);
+		//if there's nothing left in stack_a, then push everything back onto that.
+		if ((*(stack_a))[0] < 3)
+			while((*(stack_b))[0] > 1)
+				perform_operation(stack_a, stack_b, 6);
+	}
+}
+
 void	free_arrays(int *stack_a, int *stack_b, int **commands)
 {
 	free(stack_a);
@@ -508,11 +596,7 @@ void	push_swap(int *stack_a)
 	*(commands + 1) = initialize_stack();
 	if (check_sorted(stack_a, stack_b))
 		return;
-	while (*(commands + 1)[0] == 1)
-	{
-		r_push_swap(&stack_a, &stack_b, commands, max_depth);
-		max_depth++;
-	}
+	push_swap_two(&stack_a, &stack_b, commands);
 	ints_to_commands(*(commands + 1));
 	free_arrays(stack_a, stack_b, commands);
 }
