@@ -1,5 +1,15 @@
 #include "push_swap.h"
 
+typedef struct s_llist
+{
+	int	val;
+	int	index;
+	int	keep;
+	struct s_llist *next;
+	struct s_llist *last;
+} 	t_llist;
+
+
 void    swap(int *a, int *b)
 {
         *a ^= *b;
@@ -503,39 +513,67 @@ int	get_dir(int *stack_a, int *stack_b, int smallest, int largest)
 		return (get_dir_2(stack_a, smallest));
 }
 
-void	push_swap_isort(int **stack_a, int **stack_b, int **commands)
+int	not_sorted(t_llist *stack)
 {
-	int 	smallest = id_smallest(*stack_a);
-	int 	largest = id_largest(*stack_a);
-	int 	dir = -1;
+	int head[3];
 
-	while (!(check_sorted(*stack_a, *stack_b)))
+	head[0] = stack->val;
+	head[1] = 0;
+	head[2] = stack->index;
+
+	while(head[1] < 1)
 	{
-		if (*(*(stack_a) + 1) > *(*(stack_a) + 2) && (*(*(stack_a) + 2) != smallest))
+		if (stack->next->val == head[0])
+			head[1]++;
+		if (head[2] != stack->index && head[2] != stack->index - 1)
+			return (1);
+		head[2] = stack->index;
+		stack = stack->next;
+	}
+	return (0);
+}
+
+
+
+
+
+
+
+
+
+void	push_b(t_llist *stack_a, t_llist *stack_b, int **commands)
+{
+	*commands = push_end(*commands, 7);
+	if (!stack_b)
+	{
+		stack_b = stack_a;
+		if (stack_a->last != stack_a->next)
 		{
-			perform_operation(stack_a, stack_b, 7);
-			*commands = push_end(*commands, 7);
-			print_array(*stack_a);
-                	print_array(*stack_b);
-			dir = get_dir(*stack_a, *stack_b, smallest, largest);
-			while (*(*(stack_b) + 1) > *(*(stack_a) + 1) && (*(*(stack_a) + 1) != smallest))
-			{
-				perform_operation(stack_a, stack_b, dir);
-                        	*commands = push_end(*commands, dir);
-                        	print_array(*stack_a);
-                        	print_array(*stack_b);
-			}
-			dir = -1;
-			perform_operation(stack_a, stack_b, 6);
-			*commands = push_end(*commands, 6);
-			print_array(*stack_a);
-			print_array(*stack_b);
+			stack_a->last->next = stack_a->next;
+			stack_a->next->last = stack_a->last;
+			stack_a = stack_a->next;
 		}
-		dir = (dir == -1) ? get_dir(*stack_a, *stack_b, smallest, largest) : dir * 1;
-		perform_operation(stack_a, stack_b, dir);
-		*commands = push_end(*commands, dir);
-		print_array(*stack_a);
-		print_array(*stack_b);
+		else
+			stack_a = NULL;
+		stack_b->last = stack_b;
+		stack_b->next = stack_b;
+	}
+}
+
+void	push_swap_indexed(t_llist *stack_a, int **commands)
+{
+	t_llist *stack_b = NULL;
+
+	while (not_sorted(stack_a))
+	{
+		if (stack_a->keep == 0)
+		{
+			push_b(stack_a, stack_b, commands);
+			print_array(*commands);
+		}
+		//else
+			//do_the_rotate
+		stack_a = stack_a->next;
 	}
 }
 
@@ -546,26 +584,222 @@ void	free_arrays(int *stack_a, int *stack_b, int *commands)
 	free(commands);
 }
 
+typedef struct  s_hash
+{
+        int     current_score;
+	int	best_score;
+	int	best_index;
+        int     head_index;
+	int	last_index;
+	int	final_index;
+}       t_hash;
+
+int	reset_and_test_hash(t_hash *best)
+{
+	if (best->head_index == -1)
+	{
+		best->current_score = 0;
+		best->best_score = 0;
+		best->best_index = 0;
+		best->head_index = 0;
+		best->last_index = -1;
+		best->final_index = -1;
+		return (1);
+	}
+	else if (best->head_index == best->final_index)
+		return (0);
+	else
+	{
+		if (best->current_score > best->best_score)
+		{
+			best->best_score = best->current_score;
+			best->best_index = best->head_index;
+		}
+		best->final_index = -1;
+		best->last_index = 0;
+		best->current_score = 0;
+		best->head_index++;
+		return (1);
+	}
+	return (0);
+}
+
+t_llist	*label(t_llist *head, t_hash best)
+{
+	t_llist		*ref;
+	int		current_index;
+	int		i;
+
+	current_index = best.best_index - 1;
+	ref = head;
+	i = 0;
+	while (i < 2)
+	{
+		if (head->index == current_index + 1)
+		{
+			head->keep = 1;
+			current_index++;
+		}
+		else
+			head->keep = 0;
+		head = head->next;
+		if (head->index == best.best_index)
+			++i;
+	}
+	return (ref);
+}
+
+t_llist	*classify(t_llist *head)
+{
+	t_llist		*ref;
+	t_hash		best;
+	int		first;	
+
+	best.head_index = -1;
+	ref = head;
+	first = head->val;
+	while ((head = ref) && reset_and_test_hash(&best))
+	{
+		while (best.final_index < 0)
+		{
+			if (head->index == best.last_index + 1)
+			{
+				best.last_index++;
+				best.current_score++;
+			}
+			if (head->next->val == first)
+				best.final_index = head->index;
+			head->next->last = head;
+			head = head->next;
+		}
+	}
+	return (label(head, best));
+}
+
+int	next_bigger_index(int *stack, int value)
+{
+	int	i;
+	int	j;
+	int	next;
+
+	i = 1;
+	j = 1;
+	next = value;
+	while (i < stack[0])
+	{
+		if (stack[i] > value)
+		{
+			if (next == value)
+			{
+				next = stack[i];
+				j = i;
+			}
+			else if (stack[i] < next)
+			{
+				next = stack[i];
+				j = i;
+			}
+		}
+		++i;
+	}
+	return (j);
+}
+
+int	smallest_index(int *things)
+{
+	int 	i;
+	int	j;
+	int 	small;
+
+	small = things[1];
+	i = j = 1;
+	while (i < things[0])
+	{
+		if (things[i] < small)
+		{
+			j = i;
+			small = things[i];
+		}
+		++i;
+	}
+	return (j);
+}
+
+int	*index_stack(int *stack)
+{
+	int	*out;
+	int	i = 1;
+	int	j = 0;
+
+	if (!(out = (int *)malloc(sizeof(int) * stack[0])))
+		error();
+	out[0] = stack[0];
+	while (j < stack[0] - 1)
+	{	
+		if (j == 0)
+			i = smallest_index(stack);
+		else
+			i = next_bigger_index(stack, stack[i]);
+		out[i] = j++;
+	}
+	return (out);
+}
+
+t_llist	*make_order(int *stack_a)
+{
+	t_llist		*order;
+	t_llist 	*head;
+	int		*indexes;
+	int		i;
+
+	i = 1;
+	if (!(order = (t_llist *)malloc(sizeof(t_llist))))
+		error();
+	indexes = index_stack(stack_a);
+	head = order;
+	while (i < stack_a[0])
+	{
+		order->val = stack_a[i];
+		order->index = indexes[i];
+		if (i < stack_a[0] - 1)
+		{
+			if (!(order->next = (t_llist *)malloc(sizeof(t_llist))))
+				error();
+			order = order->next;
+		}
+		else
+			order->next = head;
+		++i;
+	}
+	free(indexes);
+	return (classify(head));
+}
+
 void	push_swap(int *stack_a)
 {
-	int	*stack_b;
-	int	*commands;
+	int		*stack_b;
+	int		*commands;
+	t_llist		*order;
 
-	stack_b = initialize_stack();
+	//stack_b = initialize_stack();
 	commands = initialize_stack();
+	order = make_order(stack_a);
 	if (check_sorted(stack_a, stack_b))
 		return;
-	push_swap_isort(&stack_a, &stack_b, &commands);
-	ints_to_commands(commands);
-	free_arrays(stack_a, stack_b, commands);
+	push_swap_indexed(order, &commands);
+//	ints_to_commands(commands);
+//	free_arrays(stack_a, stack_b, commands);
 }
 
 int	main(int argc, char **argv)
 {
-	if (argc < 2 || !argv)
+/*	if (argc < 2 || !argv)
 		error();
 	if (check_input(argc, argv))
 		error();
-	push_swap(get_stack(argc, argv));
+*/
+	int artificial_stack_a[10] = {10, 8, 9, 2, 3, 4, 5, 6, 1, 7};
+	push_swap(artificial_stack_a);
+//	push_swap(get_stack(argc, argv));
 	return (0);
 }
