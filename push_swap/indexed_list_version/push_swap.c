@@ -1,10 +1,16 @@
 #include "push_swap.h"
 
+/*
+You should probably remove the whole "max index" bit, I'm leaving it in for now incase that it comes in handy later, but don't think it will.
+What happens with the "is sorted" function if you only have one item in stack_a? Check this edge case.
+*/
+
 typedef struct s_llist
 {
 	int	val;
 	int	index;
 	int	keep;
+	int	max_index;
 	struct s_llist *next;
 	struct s_llist *last;
 } 	t_llist;
@@ -513,67 +519,225 @@ int	get_dir(int *stack_a, int *stack_b, int smallest, int largest)
 		return (get_dir_2(stack_a, smallest));
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int	edge_indexes(t_llist *stack, int ref_index)
+{
+	int 	first_index;
+	int	out_index;
+
+	first_index = stack->index;
+	out_index = ref_index;
+	while (stack)
+	{
+		if (ref_index == 0)
+			if (stack->index > out_index)
+				out_index = stack->index;
+		if (ref_index != 0)
+			if (stack->index < out_index)
+				out_index = stack->index;
+		stack = stack->next;
+		if (stack->index == first_index)
+			break;
+	}
+	return (out_index);
+}
+
 int	not_sorted(t_llist *stack)
 {
-	int head[3];
+	int tracking[2];
+	int min;
+	int max;
 
-	head[0] = stack->val;
-	head[1] = 0;
-	head[2] = stack->index;
-
-	while(head[1] < 1)
+	tracking[0] = stack->val;
+	tracking[1] = stack->index;
+	max = edge_indexes(stack, 0);
+	min = edge_indexes(stack, max);
+	while(stack)
 	{
-		if (stack->next->val == head[0])
-			head[1]++;
-		if (head[2] != stack->index && head[2] != stack->index - 1)
-			return (1);
-		head[2] = stack->index;
+		if (tracking[1] != stack->index && tracking[1] != stack->index - 1)
+			if (tracking[1] != max || stack->index != min)
+				return (1);
+		if (stack->next->val == tracking[0])
+			break;
+		tracking[1] = stack->index;
 		stack = stack->next;
 	}
 	return (0);
 }
 
-
-
-
-
-
-
-
-
-void	push_b(t_llist *stack_a, t_llist *stack_b, int **commands)
+void	push_a(t_llist **stack_a, t_llist **stack_b, int **commands)
 {
-	*commands = push_end(*commands, 7);
-	if (!stack_b)
+	t_llist *temp;
+
+        *commands = push_end(*commands, 6);
+	temp = *stack_b;
+	if ((*stack_b)->next == *stack_b)
+		*stack_b = NULL;
+	else
 	{
-		stack_b = stack_a;
-		if (stack_a->last != stack_a->next)
-		{
-			stack_a->last->next = stack_a->next;
-			stack_a->next->last = stack_a->last;
-			stack_a = stack_a->next;
-		}
-		else
-			stack_a = NULL;
-		stack_b->last = stack_b;
-		stack_b->next = stack_b;
+		*stack_b = (*stack_b)->next;
+		(*stack_b)->last->last->next = *stack_b;
+		(*stack_b)->last = (*stack_b)->last->last;
+	}
+	(*stack_a)->last->next = temp;
+	temp->next = *stack_a;
+	temp->last = (*stack_a)->last;
+	(*stack_a)->last = temp;
+	*stack_a = (*stack_a)->last;
+}
+
+void	push_b(t_llist **stack_a, t_llist **stack_b, int **commands)
+{
+	t_llist *temp;
+
+	*commands = push_end(*commands, 7);
+	if (!*stack_b)
+	{
+		*stack_b = *stack_a;	
+		(*stack_a)->next->last = (*stack_a)->last;
+		(*stack_a)->last->next = (*stack_a)->next;
+		(*stack_a) = (*stack_a)->next;
+		(*stack_b)->last = (*stack_b);
+		(*stack_b)->next = (*stack_b);
+		return;
+	}
+	temp = *stack_a;
+	(*stack_a) = (*stack_a)->next;
+	(*stack_a)->last->last->next = (*stack_a);
+	(*stack_a)->last = (*stack_a)->last->last;
+	temp->next = *stack_b;
+	temp->last = (*stack_b)->last;
+	(*stack_b)->last->next = temp;
+	(*stack_b)->last = temp;
+	*stack_b = (*stack_b)->last;
+}
+
+int	shortest_path(t_llist *stack)
+{
+	int		dir;
+	t_llist		*ra;
+	t_llist		*rra;
+
+	ra = stack;
+	rra = stack;
+	while (1)
+	{
+		if (ra->keep == 0)
+			return (1);
+		if (rra->keep == 0)
+			return (2);
+		ra = ra->next;
+		rra = rra->last;
 	}
 }
+
+int	check_push_a(t_llist *stack_a, t_llist *stack_b)
+{
+	int max;
+	int min;
+
+	max = edge_indexes(stack_a, 0);
+	min = edge_indexes(stack_a, max);
+	if (stack_a->index > stack_b->index && stack_a->last->index < stack_b->index)
+		return (1);
+	if (stack_b->index < min && stack_a->index == min)
+		return (1);
+	if (stack_b->index > max && stack_a->last->index == max)
+		return (1);
+	return (0);
+}
+
+void	print_stacks(t_llist *a, t_llist *b)
+{
+	int first;
+
+	first = a->index;
+	while(a)
+	{
+		printf ("%i->", a->val);
+		a = a->next;
+		if (a->index == first)
+			break;
+	}
+	printf ("\n");
+        while(a)
+        {
+                printf ("%i->", a->index);
+                a = a->next; 
+                if (a->index == first)
+                        break;
+        }
+	printf ("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	if (b)
+		printf ("%i->", b->val);
+	printf ("\n");
+	if (b)
+        	printf ("%i->", b->index);
+	printf ("\n");
+}
+
+
+void	print_one_stack(t_llist *stack)
+{
+	int first;
+
+	first = stack->index;
+	while(stack)
+	{
+		printf ("%i->", stack->val);
+		stack = stack->next;
+		if (stack->index == first)
+			break;
+	}
+	printf ("\n\n");
+}
+
 
 void	push_swap_indexed(t_llist *stack_a, int **commands)
 {
 	t_llist *stack_b = NULL;
+	int	dir;
 
 	while (not_sorted(stack_a))
 	{
+		dir = shortest_path(stack_a);
 		if (stack_a->keep == 0)
+			push_b(&stack_a, &stack_b, commands);
+		else
 		{
-			push_b(stack_a, stack_b, commands);
-			print_array(*commands);
+			stack_a = (dir == 1) ? stack_a->next : stack_a->last;
+			*commands = push_end(*commands, dir);
 		}
-		//else
-			//do_the_rotate
-		stack_a = stack_a->next;
+	}
+	while (stack_b)
+	{
+		if (check_push_a(stack_a, stack_b))
+			push_a(&stack_a, &stack_b, commands);
+		else
+                {       
+                       	stack_a = stack_a->next;
+                        *commands = push_end(*commands, 1);
+                }
+	}	
+	while (stack_a->index != 0)
+	{
+		stack_a = stack_a->last;
+		*commands = push_end(*commands, 2);
 	}
 }
 
@@ -616,7 +780,7 @@ int	reset_and_test_hash(t_hash *best)
 			best->best_index = best->head_index;
 		}
 		best->final_index = -1;
-		best->last_index = 0;
+		best->last_index = best->head_index;
 		best->current_score = 0;
 		best->head_index++;
 		return (1);
@@ -653,13 +817,15 @@ t_llist	*classify(t_llist *head)
 {
 	t_llist		*ref;
 	t_hash		best;
-	int		first;	
+	int		i;
 
 	best.head_index = -1;
 	ref = head;
-	first = head->val;
-	while ((head = ref) && reset_and_test_hash(&best))
+	while (reset_and_test_hash(&best))
 	{
+		while(head->index != best.head_index)
+			head = head->next;
+		i = 0;
 		while (best.final_index < 0)
 		{
 			if (head->index == best.last_index + 1)
@@ -667,13 +833,14 @@ t_llist	*classify(t_llist *head)
 				best.last_index++;
 				best.current_score++;
 			}
-			if (head->next->val == first)
-				best.final_index = head->index;
+			if (head->next->index == best.head_index)
+				best.final_index = i;
 			head->next->last = head;
 			head = head->next;
+			++i;
 		}
 	}
-	return (label(head, best));
+	return (label(ref, best));
 }
 
 int	next_bigger_index(int *stack, int value)
@@ -745,6 +912,13 @@ int	*index_stack(int *stack)
 	return (out);
 }
 
+void	init_node(t_llist *node, int val, int index, int max)
+{
+	node->val = val;
+	node->index = index;
+	node->max_index = max;
+}
+
 t_llist	*make_order(int *stack_a)
 {
 	t_llist		*order;
@@ -759,8 +933,7 @@ t_llist	*make_order(int *stack_a)
 	head = order;
 	while (i < stack_a[0])
 	{
-		order->val = stack_a[i];
-		order->index = indexes[i];
+		init_node(order, stack_a[i], indexes[i], stack_a[0] - 2);
 		if (i < stack_a[0] - 1)
 		{
 			if (!(order->next = (t_llist *)malloc(sizeof(t_llist))))
@@ -781,25 +954,25 @@ void	push_swap(int *stack_a)
 	int		*commands;
 	t_llist		*order;
 
-	//stack_b = initialize_stack();
+	stack_b = initialize_stack();
 	commands = initialize_stack();
 	order = make_order(stack_a);
 	if (check_sorted(stack_a, stack_b))
 		return;
 	push_swap_indexed(order, &commands);
-//	ints_to_commands(commands);
+	ints_to_commands(commands);
 //	free_arrays(stack_a, stack_b, commands);
 }
 
 int	main(int argc, char **argv)
 {
-/*	if (argc < 2 || !argv)
+	if (argc < 2 || !argv)
 		error();
 	if (check_input(argc, argv))
 		error();
-*/
-	int artificial_stack_a[10] = {10, 8, 9, 2, 3, 4, 5, 6, 1, 7};
-	push_swap(artificial_stack_a);
-//	push_swap(get_stack(argc, argv));
+
+//	int artificial_stack_a[11] = {6, 1, 5, 4, 3, 2};
+//	push_swap(artificial_stack_a);
+	push_swap(get_stack(argc, argv));
 	return (0);
 }
