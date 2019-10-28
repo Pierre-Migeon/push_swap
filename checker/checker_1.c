@@ -1,25 +1,4 @@
-
-int	check_sorted(int *stack_a, int *stack_b)
-{
-	int i;
-
-	if (stack_b[0] > 1)
-		return (0);
-	i = 2;
-	while (i < stack_a[0])
-	{
-			if (stack_a[i] < stack_a[i - 1])
-			{
-				free(stack_a);
-				free(stack_b);
-				return (0);
-			}
-		i++;
-	}
-	free(stack_a);
-	free(stack_b);
-	return (1);
-}
+#include "checker.h"
 
 void	run_command(int command, int *stack)
 {
@@ -52,10 +31,12 @@ int	*intialize_stack_b(void)
 
 int	perform_sort(int *commands, int *stack_a)
 {
-	int i;
+	int 	i;
 	int *stack_b;
 
 	stack_b = intialize_stack_b();
+	if ((commands[0] == 1) && check_sorted(stack_a, stack_b, commands, 0))
+		return (1);
 	i = 1;
 	while (i < commands[0])
 	{
@@ -74,5 +55,35 @@ int	perform_sort(int *commands, int *stack_a)
 		}
 		i++;
 	}
-	return (check_sorted(stack_a, stack_b));
+	return (check_sorted(stack_a, stack_b, commands, 1));
+}
+
+int	grade_it(int i)
+{
+	(i == 1) ? write(1, "OK\n", 3) : write(1, "KO\n", 3);
+	return (0);
+}
+
+int	main(int argc, char **argv)
+{
+	int start_args;
+	int *commands = NULL;
+	int *stack;
+
+	if (argc < 2)
+		return (0);
+	if (!(start_args = check_input(argc, argv)))
+		error();
+	stack = get_stack(argc, argv, start_args);
+	if (start_args > 0)
+		commands = get_commands(argv, start_args, argc);
+	else
+		commands = read_commands();
+	if (check_commands(commands))
+	{
+		free(stack);
+		free(commands);
+		error();
+	}
+	return (grade_it(perform_sort(commands, stack)));
 }

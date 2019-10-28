@@ -1,5 +1,9 @@
+#include "checker.h"
+
 void	swap(int *a, int *b)
 {
+	if (*a == *b)
+		return;
 	*a ^= *b;
 	*b ^= *a;
 	*a ^= *b;
@@ -64,4 +68,3 @@ int	*push(int *stack_source, int *stack_destination)
 	free(stack_destination);
 	return (out);
 }
-

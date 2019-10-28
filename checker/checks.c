@@ -1,3 +1,5 @@
+#include "checker.h"
+
 void    error(void)
 {       
         write(1, "Error\n", 6);
@@ -60,4 +62,3 @@ int	check_input(int argc, char **argv)
 			return (0);
 	return ((start_args == i) ? -1 : start_args);
 }
-

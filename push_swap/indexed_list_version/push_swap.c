@@ -629,7 +629,6 @@ void	push_b(t_llist **stack_a, t_llist **stack_b, int **commands)
 
 int	shortest_path(t_llist *stack)
 {
-	int		dir;
 	t_llist		*ra;
 	t_llist		*rra;
 
@@ -644,6 +643,7 @@ int	shortest_path(t_llist *stack)
 		ra = ra->next;
 		rra = rra->last;
 	}
+	return (1);
 }
 
 int	check_push_a(t_llist *stack_a, t_llist *stack_b)
@@ -691,7 +691,6 @@ void	print_stacks(t_llist *a, t_llist *b)
 	printf ("\n");
 }
 
-
 void	print_one_stack(t_llist *stack)
 {
 	int first;
@@ -706,6 +705,28 @@ void	print_one_stack(t_llist *stack)
 	}
 	printf ("\n\n");
 }
+
+
+int	shortest_path_2(t_llist *stack_a)
+{
+	t_llist *ra;
+	t_llist	*rra;
+
+	ra = stack_a;
+	rra = stack_a;
+
+	while (1)
+	{
+		if (ra->index == 0)
+			return (1);
+		if (rra->index == 0)
+			return (2);
+		ra = ra->next;
+		rra = rra->last;
+	}
+	return (1);
+}
+
 
 
 void	push_swap_indexed(t_llist *stack_a, int **commands)
@@ -736,8 +757,9 @@ void	push_swap_indexed(t_llist *stack_a, int **commands)
 	}	
 	while (stack_a->index != 0)
 	{
-		stack_a = stack_a->last;
-		*commands = push_end(*commands, 2);
+		dir = shortest_path_2(stack_a);
+		stack_a = (dir == 1) ? stack_a->next : stack_a->last;
+		*commands = push_end(*commands, dir);
 	}
 }
 

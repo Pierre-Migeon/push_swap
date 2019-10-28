@@ -1,6 +1,3 @@
-
-
-
 #ifndef CHECKER_H
 # define CHECKER_H
 
@@ -40,14 +37,15 @@ t_listy	*push_head(t_listy *head, char *str);
 void	add_char(char temp[6], char *c);
 int	*generate_commands(t_listy *head);
 int	*generate_zero();
-int	*read_commands(int *commands);
-int	check_sorted(int *stack_a, int *stack_b);
+int	*read_commands(void);
+int	check_sorted(int *stack_a, int *stack_b, int *commands, int f);
 int	*get_stack(int argc, char **argv, int start_args);
 void	run_command(int command, int *stack);
 void	print_stack(int *stack);
 int	*intialize_stack_b(void);
 int	perform_sort(int *commands, int *stack_a);
-int	grade_it(int i, int from_STDIN);
+int	grade_it(int i);
 int	main(int argc, char **argv);
+int     check_commands(int *commands);
 
 #endif
