@@ -35,7 +35,7 @@ void	r_permute(int *in_array, int **out_array, int lower, int upper)
 
 	if (lower == upper)
 	{
-		out_array[i] = memcpy(out_array[i], in_array, sizeof(int) * 5);
+		out_array[i] = memcpy(out_array[i], in_array, sizeof(int) * ARRAY_SIZE);
 		i++;
 	}
 	for (int j = lower; j <= upper; j++)
@@ -105,35 +105,39 @@ char *make_string(int *array)
 {
 	char *str_a;
 	char *str_b;
-	char *str_f;
-	char *str_g;
-	char *str_h;
-	char *str_i;
+	char *str_c;
+	char *str_d;
+	//char *str_e;
+	//char *str_f;
 	int i;
 	
 	i = -1;
-	str_a = "../push_swap/indexed_list_version/a.out ";
+	str_a = "../push_swap/multiple_algorithms/push_swap ";
 	str_b = array_to_string(array);
-	str_f = ft_strjoin(str_a, str_b);
-	str_g = " | ../checker/checker ";
-	str_h = ft_strjoin(str_g, str_b);
-	str_i = ft_strjoin(str_f, str_h);
+	str_c = ft_strjoin(str_a, str_b);
+	//str_d = " | ../checker/checker ";
+	
+	//str_e = ft_strjoin(str_c, str_d);
+	//str_f = ft_strjoin(str_e, str_b);
 //	for checking the number of commands it takes to solve:
-//	str_g = ft_strjoin(str_f, " | wc -l");
+	str_d = ft_strjoin(str_c, " | wc -l");
 
 
 	free(str_b);
-	return (str_i);
+	return (str_d);
 }
 
 int	main()
 {
 	int i;
-	int array[ARRAY_SIZE] = {0, 1, 2, 3, 4};
+	int array[ARRAY_SIZE] = {0, 1, 2, 3, 4 }; //, 5, 6, 7, 8, 9};
+	//int array[ARRAY_SIZE] ={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99};
 	int **o_array = NULL;
 	char *str;
 
 	i = factorial(ARRAY_SIZE);
+	printf ("i is %i\n", i);
+
 	o_array = all_possible(array, i);
 
 	for (int j = 1; j < i; j++)
@@ -142,5 +146,6 @@ int	main()
 		printf ("%s\n", str);		
 		system(str);
 	}
+
 	return (0);
 }

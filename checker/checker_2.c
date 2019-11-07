@@ -45,7 +45,7 @@ int	*read_commands(void)
 	t_listy		*head = NULL;
 
 	init_zero(i, line);
-        while (((i[1] = read(0, temp, 1)) >= 0) && !(temp[1] = '\0'))
+        while (((i[1] = read(0, temp, 1)) > 0) && !(temp[1] = '\0'))
         {       
 		if (temp[0] != '\n' && i[0] < 3)
 			line[i[0]] = temp[0];

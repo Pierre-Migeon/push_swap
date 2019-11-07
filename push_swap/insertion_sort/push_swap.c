@@ -515,27 +515,19 @@ void	push_swap_isort(int **stack_a, int **stack_b, int **commands)
 		{
 			perform_operation(stack_a, stack_b, 7);
 			*commands = push_end(*commands, 7);
-			print_array(*stack_a);
-                	print_array(*stack_b);
 			dir = get_dir(*stack_a, *stack_b, smallest, largest);
 			while (*(*(stack_b) + 1) > *(*(stack_a) + 1) && (*(*(stack_a) + 1) != smallest))
 			{
 				perform_operation(stack_a, stack_b, dir);
                         	*commands = push_end(*commands, dir);
-                        	print_array(*stack_a);
-                        	print_array(*stack_b);
 			}
 			dir = -1;
 			perform_operation(stack_a, stack_b, 6);
 			*commands = push_end(*commands, 6);
-			print_array(*stack_a);
-			print_array(*stack_b);
 		}
 		dir = (dir == -1) ? get_dir(*stack_a, *stack_b, smallest, largest) : dir * 1;
 		perform_operation(stack_a, stack_b, dir);
 		*commands = push_end(*commands, dir);
-		print_array(*stack_a);
-		print_array(*stack_b);
 	}
 }
 
