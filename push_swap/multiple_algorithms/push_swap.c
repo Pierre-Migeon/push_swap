@@ -364,6 +364,7 @@ void	free_arrays(int *stack_a, int *stack_b, int *original, int **commands)
 	free(commands[2]);
 	free(commands[3]);
 	free(commands);
+	exit(0);
 }
 
 int	*copy_original(int *stack_a)
@@ -388,25 +389,20 @@ void	push_swap(int *stack_a)
 	t_llist 	*order;
 
 	stack_b = initialize_stack();
-	if (check_sorted(stack_a, stack_b))
-        {
-		free(stack_a);
-		free(stack_b);
-	        return ;
-	}
 	if (!(commands = (int **)malloc(sizeof(int *) * 4)))
 		return ;
-	commands[0] = initialize_stack();
-	commands[1] = initialize_stack();
-	commands[2] = initialize_stack();
-	commands[3] = initialize_stack();
+	for (int i = 0; i < 4; i++)
+		commands[i] = initialize_stack();
 	original = copy_original(stack_a);
+	if (check_sorted(stack_a, stack_b))
+		free_arrays(stack_a, stack_b, original, commands);
 	push_swap_bsort(stack_a, stack_b, &commands[0]);
 	ft_memcpy(stack_a, original, original[0] * sizeof(int));
 	order = make_order(stack_a);
 	push_swap_indexed(order, &commands[1]);
 	order = make_order(stack_a);
-	//push_swap_quicksort(order, &commands[2]);
+	push_swap_quicksort(order, &commands[2]);
+	order = make_order(stack_a);
 	push_swap_chunks(order, &commands[3]);
 	ints_to_commands(commands);
 	free_arrays(stack_a, stack_b, original, commands);
@@ -420,13 +416,11 @@ int	main(int argc, char **argv)
 	if (check_input(argc, argv))
 		error();
 #else 
-	int array[11] = {9, 5, 2, 7, 9, 3, 1, 8, 14};
+	int array[12] = {12, 51, 74, 32, 52, 24, 95, 71, 50, 13, 8, 63 };
 	push_swap(array);
 #endif
-
 #ifndef DEBUG
 	push_swap(get_stack(argc, argv));
-
 #endif
 	return (0);
 }

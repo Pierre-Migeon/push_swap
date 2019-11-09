@@ -1,5 +1,16 @@
 #include "checker.h"
 
+void	print_array(int *array)
+{
+	int i;
+
+	i = 1;
+	while (i < array[0])
+		printf ("%i ", array[i++]);
+	printf ("\n");
+}
+
+
 void	run_command(int command, int *stack)
 {
 	void	(*f_point[3])();

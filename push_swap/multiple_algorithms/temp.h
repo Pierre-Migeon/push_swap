@@ -110,7 +110,5 @@ void		print_range_table(int	indexes[12]);
 void		push_swap_chunks_stack_b(t_llist **stack_a, t_llist **stack_b, int **commands);
 int		*find_range(t_llist *stack_a);
 int		quickest_path_chunks(t_llist *stack_a, int *range);
-int		shortest_path_4(t_llist *head, t_llist *target, int flag);
-int		should_shift_b(t_llist *a, t_llist *b, t_dir *dir);
 
 #endif
