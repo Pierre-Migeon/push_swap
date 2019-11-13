@@ -146,6 +146,5 @@ int	main()
 		printf ("%s\n", str);		
 		system(str);
 	}
-
 	return (0);
 }

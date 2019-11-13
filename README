@@ -1,0 +1,16 @@
+
+
+This is the 42 project, push_swap, a part of the algorithms branch. The goal was to sort a list of unique integers using two stacks (stack_a and stack_b) using a set of seven different command options, and the challenge was to do so using as few of the commands as possible. Two programs were written, "push_swap", and "checker." The first, push_swap, takes as input a list, and generates a sequence of commands that will sort the list. This list of commands, printed to standard output, defines the steps that must be taken to sort the list. These commands can then be input into the "checker" program in order to verify that the list has been sorted. 
+
+Example usage: 
+
+	push_swap 3 2 1 | checker 3 2 1
+
+If push_swap successfully produces correct output, then the checker program will print "OK" to the terminal, or "KO" otherwise. Incorrect input is not tolerated, and will result in "Error" being printed to stdout. Examples of incorrect input to push_swap include duplicates in the list to be sorted, non-integers, and non-numbers. Incorrect input to checker includes these as well, but also extends to incorrectly typed commands / non-commands.
+
+9 commands may be used to sort the list, which is initially entirely stored in stack_a. The 9 commands are essentially 3 different operations performed on either stack_a, stack_b, or on both. The first operation is swap, which exchanges the first and second values in either stack_a (command sa), stack_b (sb) or both (ss). The second operation is to rotate the stack, which moves the first element of the stack to end of the stack. This operation becomes ra (rotate a), rb (rotate b), or rr (rotate both). Finally, you may reverse rotate the stacks, which moves the last element of the stack to the first position of the stack, and may be performed on stack_a (rra), stack_b (rrb) or both (rrr).
+
+I developed multiple algorithms to try and sort the list most efficiently. Inititally, I had intended to use recursive backtracking to find the most efficient means of sorting a list... this seemed to work brilliantly for very short lists, but took much much too long to find a list of commands for any input larger than ~5. Other methods were tried, and in fact are still under development and testing. For instance, bubble-sort was implemented, along with some other more home-spun ideas. These are still in play, but only the one giving the shortest list of commands will be selected for output. At the time of the writing (program is not... quite finished), lists of 50 numbers are typically sorted with less than 500 commands, and lists of 100 numbers are sorted with less than 1000 commands. Lists of length 5 will never require more than 9 commands. In order to see what algorithm was used to find the sorting list, use the "-v" flag when running push_swap.
+
+I have also written a program to test push_swap, which will produce random lists of numbers and run push_swap with them. You can specify the length of the list tested, the number of tests to run, and the type of testing mode. Right now there are two testing modes. The -1 flag runs push swap piped to word count, in order to test the number of commands produced 
+

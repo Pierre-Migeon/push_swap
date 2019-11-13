@@ -100,6 +100,8 @@ int     check_input(int argc, char **argv)
         int i;
 
         i = 1;
+	while (!(ft_strncmp(argv[i], "-", 1)))
+		i++;
         while (i < argc)
         {
                 if (!(check_int(argv[i])))
@@ -131,16 +133,20 @@ int     *get_stack(int argc, char **argv)
 {
         int *stack;
         int i;
+	int x;
 
-        if (!(stack = (int *)malloc(sizeof(int) * argc)))
+	i = 0;
+	while (!(ft_strncmp(argv[i + 1], "-", 1)))
+		i++;
+        if (!(stack = (int *)malloc(sizeof(int) * (argc - i - 1))))
                 return (0);
-        stack[0] = argc;
-        i = 1;
-        while (i < stack[0])
+        stack[0] = argc - i;
+        x = 1;
+        while (x < stack[0])
         {
-               	stack[i] = ft_atoi(argv[i]);
-                ++i;
-        }
+	      	stack[x] = ft_atoi(argv[x + i]);
+		++x;
+	}	
         return (stack);
 }
 
@@ -263,7 +269,7 @@ char	*command_convert(int i)
 	return ("Error\n");
 }
 
-void	ints_to_commands(int **commands)
+void	ints_to_commands(int **commands, int winner)
 {
 	int i;
 	int j;
@@ -274,6 +280,22 @@ void	ints_to_commands(int **commands)
 	i = 1;
 	while (i < commands[j][0])
 		ft_putstr(command_convert(commands[j][i++]));
+	if (winner)
+	{
+		if (j == 0)
+			write(1, "Bubble-Sort\n", 12);
+		else if (j == 1)
+			write(1, "Index-Sort\n", 11);
+		else if (j == 2)
+			write(1, "Quick-Sort\n", 11);
+		else
+			write(1, "Chunk-Sort\n", 11);
+	}
+        free(commands[0]);
+        free(commands[1]);
+        free(commands[2]);
+        free(commands[3]);
+        free(commands);
 }
 
 int	id_largest(int *stack)
@@ -354,17 +376,44 @@ void	push_swap_bsort(int *stack_a, int *stack_b, int **commands)
 	}
 }
 
-void	free_arrays(int *stack_a, int *stack_b, int *original, int **commands)
+int	no_numbers_just_options(char **argv, int argc)
 {
-	free(stack_a);
+	int i;
+	
+	i = 1;
+	while (i < argc)
+	{
+		while (i < argc && !(ft_strncmp(argv[i], "-", 1)))
+			++i;
+		if (i == argc)
+		{
+			write(1, "\n\tUsage: push_swap [-w] [numbers to sort]\n\n", 43);
+			return (1);
+		}
+		else
+			return (0);
+	}
+	return (0);
+}
+
+void    free_arrays_1(int *stack_a, int *stack_b, int *original, int **commands)
+{       
+        free(stack_a);
+        free(stack_b);
+        free(original);
+	free(commands[0]);
+        free(commands[1]);
+        free(commands[2]);
+        free(commands[3]);
+        free(commands);
+        exit(0);
+}
+
+void	free_arrays_2(int *stack_a, int *stack_b, int *original)
+{
+	//free(stack_a);
 	free(stack_b);
 	free(original);
-	free(commands[0]);
-	free(commands[1]);
-	free(commands[2]);
-	free(commands[3]);
-	free(commands);
-	exit(0);
 }
 
 int	*copy_original(int *stack_a)
@@ -381,46 +430,55 @@ int	*copy_original(int *stack_a)
 	return (copy);
 }
 
-void	push_swap(int *stack_a)
+int	**push_swap(int *stack_a)
 {
 	int		*stack_b;
 	int		**commands;
 	int		*original;
 	t_llist 	*order;
 
+	//printf ("1\n");
 	stack_b = initialize_stack();
 	if (!(commands = (int **)malloc(sizeof(int *) * 4)))
-		return ;
+		exit (0);
 	for (int i = 0; i < 4; i++)
 		commands[i] = initialize_stack();
-	original = copy_original(stack_a);
+	//original = copy_original(stack_a);
 	if (check_sorted(stack_a, stack_b))
-		free_arrays(stack_a, stack_b, original, commands);
-	push_swap_bsort(stack_a, stack_b, &commands[0]);
-	ft_memcpy(stack_a, original, original[0] * sizeof(int));
+		free_arrays_1(stack_a, stack_b, original, commands);
+	//printf ("2\n");
+	//push_swap_bsort(stack_a, stack_b, &commands[0]);
+	//printf ("3\n");
+	//ft_memcpy(stack_a, original, original[0] * sizeof(int));
+	//printf ("4\n");
+	//order = make_order(stack_a);
+	//printf ("5\n");
+	//push_swap_indexed(order, &commands[1]);
 	order = make_order(stack_a);
-	push_swap_indexed(order, &commands[1]);
-	order = make_order(stack_a);
-	push_swap_quicksort(order, &commands[2]);
-	order = make_order(stack_a);
+	//push_swap_quicksort(order, &commands[2]);
+	//order = make_order(stack_a);
+	//printf ("4\n");
 	push_swap_chunks(order, &commands[3]);
-	ints_to_commands(commands);
-	free_arrays(stack_a, stack_b, original, commands);
+	free_arrays_2(stack_a, stack_b, original);
+	//printf ("5\n");
+	return (commands);
 }
 
 int	main(int argc, char **argv)
 {
+	int **commands;
 #ifndef DEBUG
-	if (!argv)
-		error();
+	if (argc < 2 || no_numbers_just_options(argv, argc))
+		return (0);
 	if (check_input(argc, argv))
 		error();
 #else 
-	int array[12] = {12, 51, 74, 32, 52, 24, 95, 71, 50, 13, 8, 63 };
-	push_swap(array);
+	int array[5] = {5, 3, 1, 2, 5}; 
+	commands = push_swap(array);
 #endif
 #ifndef DEBUG
-	push_swap(get_stack(argc, argv));
+	commands = push_swap(get_stack(argc, argv));
 #endif
+	ints_to_commands(commands, (((!(ft_strcmp(argv[1], "-w")))) ? 1 : 0));
 	return (0);
 }

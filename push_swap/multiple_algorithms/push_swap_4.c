@@ -264,6 +264,8 @@ int	*make_int_stack(t_llist *stack)
 
 void	index_llist(t_llist *stack)
 {
+	if (!stack)
+		return;
 	t_llist *head;
 	int	*i_stack;
 	int	*indexes;

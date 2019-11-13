@@ -2,6 +2,8 @@
 
 int	edge_indexes(t_llist *stack, int ref_index)
 {
+	if (!stack)
+		return (0);
 	int 	first_index;
 	int	out_index;
 
