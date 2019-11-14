@@ -4,7 +4,7 @@ This is the 42 project, push_swap, a part of the algorithms branch. The goal was
 
 Example usage: 
 
-![example](screenshots/example1.jpg)
+![example](example1.png)
 
 
 If push_swap successfully produces correct output, then the checker program will print "OK" to the terminal, or "KO" otherwise. Incorrect input is not tolerated, and will result in "Error" being printed to stdout. Examples of incorrect input to push_swap include duplicates in the list to be sorted, non-integers, and non-numbers. Incorrect input to checker includes these as well, but also extends to incorrectly typed commands / non-commands.
