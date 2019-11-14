@@ -276,7 +276,7 @@ void	ints_to_commands(int **commands, int winner)
 
 	j = (commands[0][0] > commands[1][0]) ? 1 : 0;
 	j = (commands[j][0] > commands[2][0]) ? 2 : j;
-	j = (commands[j][0] > commands[3][0]) ? 3 : j; 
+	//j = (commands[j][0] > commands[3][0]) ? 3 : j; 
 	i = 1;
 	while (i < commands[j][0])
 		ft_putstr(command_convert(commands[j][i++]));
@@ -286,15 +286,15 @@ void	ints_to_commands(int **commands, int winner)
 			write(1, "Bubble-Sort\n", 12);
 		else if (j == 1)
 			write(1, "Index-Sort\n", 11);
-		else if (j == 2)
-			write(1, "Quick-Sort\n", 11);
+		//else if (j == 2)
+		//	write(1, "Quick-Sort\n", 11);
 		else
 			write(1, "Chunk-Sort\n", 11);
 	}
         free(commands[0]);
         free(commands[1]);
         free(commands[2]);
-        free(commands[3]);
+        //free(commands[3]);
         free(commands);
 }
 
@@ -404,14 +404,14 @@ void    free_arrays_1(int *stack_a, int *stack_b, int *original, int **commands)
 	free(commands[0]);
         free(commands[1]);
         free(commands[2]);
-        free(commands[3]);
+        //free(commands[3]);
         free(commands);
         exit(0);
 }
 
 void	free_arrays_2(int *stack_a, int *stack_b, int *original)
 {
-	//free(stack_a);
+	free(stack_a);
 	free(stack_b);
 	free(original);
 }
@@ -437,30 +437,23 @@ int	**push_swap(int *stack_a)
 	int		*original;
 	t_llist 	*order;
 
-	//printf ("1\n");
 	stack_b = initialize_stack();
 	if (!(commands = (int **)malloc(sizeof(int *) * 4)))
 		exit (0);
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 3; i++)
 		commands[i] = initialize_stack();
-	//original = copy_original(stack_a);
+	original = copy_original(stack_a);
 	if (check_sorted(stack_a, stack_b))
 		free_arrays_1(stack_a, stack_b, original, commands);
-	//printf ("2\n");
-	//push_swap_bsort(stack_a, stack_b, &commands[0]);
-	//printf ("3\n");
-	//ft_memcpy(stack_a, original, original[0] * sizeof(int));
-	//printf ("4\n");
-	//order = make_order(stack_a);
-	//printf ("5\n");
-	//push_swap_indexed(order, &commands[1]);
+	push_swap_bsort(stack_a, stack_b, &commands[0]);
+	ft_memcpy(stack_a, original, original[0] * sizeof(int));
 	order = make_order(stack_a);
-	//push_swap_quicksort(order, &commands[2]);
+	push_swap_indexed(order, &commands[1]);
 	//order = make_order(stack_a);
-	//printf ("4\n");
-	push_swap_chunks(order, &commands[3]);
+	//push_swap_quicksort(order, &commands[2]);
+	order = make_order(stack_a);
+	push_swap_chunks(order, &commands[2]);
 	free_arrays_2(stack_a, stack_b, original);
-	//printf ("5\n");
 	return (commands);
 }
 

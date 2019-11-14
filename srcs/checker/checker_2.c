@@ -93,12 +93,16 @@ int	check_sorted(int *stack_a, int *stack_b, int *commands, int f)
 	return (1);
 }
 
-int	*get_stack(int argc, char **argv, int start_args)
+int	*get_stack(int argc, char **argv, int start_args, t_params *params)
 {
 	int stack_size;
 	int *stack;
 	int i;
 
+	i = 1;
+	params->print_list = (!(ft_strncmp(argv[i], "-p", 2))) ? 1 : 0;
+	while(!(ft_strncmp(argv[i], "-", 1)))
+		++i;
 	stack_size = (start_args > 0) ? start_args : argc;
 	if (!(stack = (int *)malloc(sizeof(int) * stack_size)))
 		return (0);

@@ -1,7 +1,7 @@
 #ifndef CHECKER_H
 # define CHECKER_H
 
-#include "../includes/get_next_line/get_next_line.h"
+#include "../../includes/libft/libft.h"
 #include <sys/uio.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,6 +17,11 @@ typedef struct  	s_listy
 	int 		piped_in;
         struct s_listy	*next;
 }       		t_listy;
+
+typedef struct		s_params
+{
+	int		print_list;
+}			t_params;
 
 
 void	swap(int *a, int *b);
@@ -39,11 +44,11 @@ int	*generate_commands(t_listy *head);
 int	*generate_zero();
 int	*read_commands(void);
 int	check_sorted(int *stack_a, int *stack_b, int *commands, int f);
-int	*get_stack(int argc, char **argv, int start_args);
+int	*get_stack(int argc, char **argv, int start_args, t_params *params);
 void	run_command(int command, int *stack);
-void	print_stack(int *stack);
+void	print_stack(int *stack_a, int *stack_b);
 int	*intialize_stack_b(void);
-int	perform_sort(int *commands, int *stack_a);
+int	perform_sort(int *commands, int *stack_a, t_params *params);
 int	grade_it(int i);
 int	main(int argc, char **argv);
 int     check_commands(int *commands);

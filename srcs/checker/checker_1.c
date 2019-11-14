@@ -40,7 +40,7 @@ int	*intialize_stack_b(void)
 	return (out);
 }
 
-int	perform_sort(int *commands, int *stack_a)
+int	perform_sort(int *commands, int *stack_a, t_params *params)
 {
 	int 	i;
 	int *stack_b;
@@ -66,6 +66,8 @@ int	perform_sort(int *commands, int *stack_a)
 		}
 		i++;
 	}
+	if (params->print_list)
+		print_stack(stack_a, stack_b);
 	return (check_sorted(stack_a, stack_b, commands, 1));
 }
 
@@ -77,15 +79,18 @@ int	grade_it(int i)
 
 int	main(int argc, char **argv)
 {
-	int start_args;
-	int *commands = NULL;
-	int *stack;
+	int 		start_args;
+	int 		*commands = NULL;
+	int 		*stack;
+	t_params	*params;
 
 	if (argc < 2)
 		return (0);
+	if (!(params = (t_params *)malloc(sizeof(t_params))))
+		error();
 	if (!(start_args = check_input(argc, argv)))
 		error();
-	stack = get_stack(argc, argv, start_args);
+	stack = get_stack(argc, argv, start_args, params);
 	if (start_args > 0)
 		commands = get_commands(argv, start_args, argc);
 	else
@@ -96,5 +101,5 @@ int	main(int argc, char **argv)
 		free(commands);
 		error();
 	}
-	return (grade_it(perform_sort(commands, stack)));
+	return (grade_it(perform_sort(commands, stack, params)));
 }

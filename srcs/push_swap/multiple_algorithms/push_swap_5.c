@@ -139,7 +139,6 @@ void	push_swap_chunks(t_llist *stack_a, int **commands)
 	int 		*range;
 	t_llist         *stack_b = NULL;
 	int             dir;
-	int		max;
 
 	while (stack_a_too_big(stack_a))
 	{

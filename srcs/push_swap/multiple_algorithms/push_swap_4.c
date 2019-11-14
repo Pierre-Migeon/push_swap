@@ -291,7 +291,6 @@ void	push_swap_quicksort(t_llist *stack_a, int **commands)
 	int 		median;
 	int		dir;
 	t_llist         *stack_b = NULL;
-	t_llist		*head;
 
 	while (stack_a_too_big(stack_a))
 	{

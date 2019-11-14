@@ -48,6 +48,8 @@ int	check_input(int argc, char **argv)
 	int start_args;
 
 	i = 1;
+	while(!(ft_strncmp(argv[i], "-", 1)))
+		++i;
 	while (i < argc && (!(is_command(argv[i]))))
 	{
 		if (check_int(argv[i]))
