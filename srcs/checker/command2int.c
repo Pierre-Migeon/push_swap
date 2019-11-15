@@ -44,20 +44,22 @@ int	check_commands(int *commands)
 void	print_stack(int *stack_a, int *stack_b)
 {
 	int i;
+	char *str;
 
 	i = 1;
 	while (i < stack_a[0])
 	{
-		write(1, &stack_a[i++], 1);
-		write(1, ", ", 2);
+		str = ft_itoa(stack_a[i++]);
+		while (*str)
+			write(1, str++, 1);
+		write(1, " ", 1);
 	}
 	write(1, "\n", 1);
 	i = 1;
 	if (stack_b[0] > 1)
 		write(1, "Stack_B: \n", 10);
+	else
+		return ;
 	while (i < stack_b[0])
-	{
 		write(1, &stack_b[i++], 1);
-		write(1, ", ", 2);
-	}
 }

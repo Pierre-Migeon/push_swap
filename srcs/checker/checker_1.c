@@ -77,12 +77,28 @@ int	grade_it(int i)
 	return (0);
 }
 
+
+int	shift_argv(int argc, char **argv)
+{
+	int i;
+
+	i = 0;
+	while (i < argc - 1)
+	{
+		argv[i] = argv[i + 1];
+		++i;
+	}
+	return (argc - 1);
+}
+
 int	main(int argc, char **argv)
 {
 	int 		start_args;
 	int 		*commands = NULL;
 	int 		*stack;
 	t_params	*params;
+
+	//argc = shift_argv(argc, argv);
 
 	if (argc < 2)
 		return (0);

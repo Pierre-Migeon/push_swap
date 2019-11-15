@@ -98,20 +98,18 @@ int	*get_stack(int argc, char **argv, int start_args, t_params *params)
 	int stack_size;
 	int *stack;
 	int i;
+	int j;
 
 	i = 1;
 	params->print_list = (!(ft_strncmp(argv[i], "-p", 2))) ? 1 : 0;
 	while(!(ft_strncmp(argv[i], "-", 1)))
 		++i;
-	stack_size = (start_args > 0) ? start_args : argc;
+	stack_size = (start_args > 0) ? start_args : argc - i + 1;
 	if (!(stack = (int *)malloc(sizeof(int) * stack_size)))
 		return (0);
 	stack[0] = stack_size;
-	i = 1;
-	while (i < stack[0])
-	{
-		stack[i] = ft_atoi(argv[i]);
-		++i;
-	}
+	j = 1;
+	while (j < stack[0])
+		stack[j++] = ft_atoi(argv[i++]);
 	return (stack);
 }
