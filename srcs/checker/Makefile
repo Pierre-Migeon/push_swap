@@ -12,3 +12,4 @@ $(NAME):
 clean:
 	@rm ./checker
 	@echo checker removed!
+re: clean all

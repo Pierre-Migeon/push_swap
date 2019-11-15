@@ -10,7 +10,6 @@ void	print_array(int *array)
 	printf ("\n");
 }
 
-
 void	run_command(int command, int *stack)
 {
 	void	(*f_point[3])();
@@ -68,6 +67,7 @@ int	perform_sort(int *commands, int *stack_a, t_params *params)
 	}
 	if (params->print_list)
 		print_stack(stack_a, stack_b);
+	free(params);
 	return (check_sorted(stack_a, stack_b, commands, 1));
 }
 
@@ -76,7 +76,6 @@ int	grade_it(int i)
 	(i == 1) ? write(1, "OK\n", 3) : write(1, "KO\n", 3);
 	return (0);
 }
-
 
 int	shift_argv(int argc, char **argv)
 {
