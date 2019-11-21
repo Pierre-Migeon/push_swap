@@ -34,6 +34,8 @@ int	is_command(char *input)
 	int match;
 	int i;
 
+	if (!(check_int(input)))
+		return (0);
 	match = 0;
 	i = 0;
 	while(*valid_com[i])
@@ -42,14 +44,25 @@ int	is_command(char *input)
 	return (match);
 }
 
+int	is_flag(char *str)
+{
+	if (ft_strncmp(str++, "-", 1))
+		return (0);
+	if (ft_isdigit(*str))
+		return (0);
+	return (1);
+}
+
 int	check_input(int argc, char **argv)
 {
 	int i;
 	int start_args;
 
 	i = 1;
-	while(!(ft_strncmp(argv[i], "-", 1)))
+	while((i < argc) && !(ft_strncmp(argv[i], "-", 1)))
 		++i;
+	if (i == argc)
+		return (-2);
 	while (i < argc && (!(is_command(argv[i]))))
 	{
 		if (check_int(argv[i]))

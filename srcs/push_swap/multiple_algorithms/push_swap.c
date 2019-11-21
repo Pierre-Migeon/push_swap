@@ -445,13 +445,13 @@ int	**push_swap(int *stack_a)
 	original = copy_original(stack_a);
 	if (check_sorted(stack_a, stack_b))
 		free_arrays_1(stack_a, stack_b, original, commands);
-	push_swap_bsort(stack_a, stack_b, &commands[0]);
-	ft_memcpy(stack_a, original, original[0] * sizeof(int));
+	//push_swap_bsort(stack_a, stack_b, &commands[0]);
+	//ft_memcpy(stack_a, original, original[0] * sizeof(int));
 	order = make_order(stack_a);
-	push_swap_indexed(order, &commands[1]);
+	//push_swap_indexed(order, &commands[1]);
 	//order = make_order(stack_a);
 	//push_swap_quicksort(order, &commands[2]);
-	order = make_order(stack_a);
+	//order = make_order(stack_a);
 	push_swap_chunks(order, &commands[2]);
 	free_arrays_2(stack_a, stack_b, original);
 	return (commands);

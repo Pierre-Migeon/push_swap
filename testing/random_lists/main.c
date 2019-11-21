@@ -135,8 +135,6 @@ int	main(int argc, char **argv)
 	}
 	x = ft_atoi(argv[1]);
 	y = ft_atoi(argv[2]);
-	i = factorial((long long)x);
-	printf ("\n\tFor a list of this size, containing %i members, there are a total of %lli possible permutations. \n\tThe number of tests requested to be run represent %f percent of all possible lists of this size. \n\tSomething to consider.\n\n", x, i, 100 * (float)y / i);
 	o_array = random_list(x, y);
 
 	for (int j = 0; j < y; j++)

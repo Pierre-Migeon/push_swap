@@ -46,7 +46,7 @@ int	*read_commands(void)
 
 	init_zero(i, line);
         while (((i[1] = read(0, temp, 1)) > 0) && !(temp[1] = '\0'))
-        {       
+        {
 		if (temp[0] != '\n' && i[0] < 3)
 			line[i[0]] = temp[0];
                 if (temp[0] == '\n')
@@ -78,7 +78,7 @@ int	check_sorted(int *stack_a, int *stack_b, int *commands, int f)
 			if (stack_a[i] < stack_a[i - 1])
 			{
 				if (f)
-				{	
+				{
 					free(stack_a);
 					free(stack_b);
 					free(commands);
@@ -90,6 +90,8 @@ int	check_sorted(int *stack_a, int *stack_b, int *commands, int f)
 	free(stack_a);
 	free(stack_b);
 	free(commands);
+	if (*commands == 1000000)
+		printf("yeah I doubt you're every going to print this\n");
 	return (1);
 }
 

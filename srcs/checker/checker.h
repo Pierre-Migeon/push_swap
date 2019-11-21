@@ -9,7 +9,6 @@
 
 # define read_error(i) (i < 0) ? error() : 0;
 
-
 typedef struct  	s_listy
 {
         char 		*str;

@@ -97,13 +97,13 @@ int	main(int argc, char **argv)
 	int 		*stack;
 	t_params	*params;
 
-	//argc = shift_argv(argc, argv);
-
 	if (argc < 2)
 		return (0);
-	if (!(params = (t_params *)malloc(sizeof(t_params))))
-		error();
 	if (!(start_args = check_input(argc, argv)))
+		error();
+	if (start_args == -2)
+		return (0);
+	if (!(params = (t_params *)malloc(sizeof(t_params))))
 		error();
 	stack = get_stack(argc, argv, start_args, params);
 	if (start_args > 0)
