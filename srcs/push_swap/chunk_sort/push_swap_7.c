@@ -5,6 +5,12 @@ void	push_swap_chunks_stack_b(t_llist **stack_a, t_llist **stack_b, int **comman
 	int max;
 	int dir;
 
+	if (!stack_b)
+	{
+		if (print)
+			print_stack(*stack_a);
+		return;
+	}
         index_llist(*stack_b);
         max = edge_indexes(*stack_b, 0);
         while (*stack_b)
@@ -39,7 +45,7 @@ void	push_swap_chunks(t_llist *stack_a, int **commands, int print)
 		if (three_in(stack_b))
 			sort_b(&stack_b, commands);
 	}
-	if (three_in(stack_a))
+	if (three_in(stack_a) || two_in(stack_a))
 		sort_a(&stack_a, commands);
 	push_swap_chunks_stack_b(&stack_a, &stack_b, commands, print);
 }
@@ -81,18 +87,14 @@ int	stack_a_too_big(t_llist *stack_a)
 
 int	three_in(t_llist *stack_b)
 {
-	t_llist         *head;
-	int		i;
-	
-	if (!stack_b)
-		return (0);
-	i = 1;
-	head = stack_b;
-	stack_b = stack_b->next;
-	while (stack_b != head)
-	{
-		++i;
-		stack_b = stack_b->next;
-	}
-	return ((i == 3) ? 1 : 0);
+	if (stack_b->next->next->next == stack_b)
+		return (1);
+	return (0);
+}
+
+int	two_in(t_llist *stack)
+{
+	if (stack->next->next == stack)
+		return (1);
+	return (0);
 }

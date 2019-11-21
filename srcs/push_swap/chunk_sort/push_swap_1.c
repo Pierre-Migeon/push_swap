@@ -39,6 +39,15 @@ void	ints_to_commands(int *commands, int winner)
 	free(commands);
 }
 
+int	is_flag(char *str)
+{
+	if (ft_strncmp(str++, "-", 1))
+		return (0);
+	if (ft_isdigit(*str))
+		return (0);
+	return (1);
+}
+
 int	no_numbers_just_options(char **argv, int argc)
 {
 	int i;
@@ -46,7 +55,7 @@ int	no_numbers_just_options(char **argv, int argc)
 	i = 1;
 	while (i < argc)
 	{
-		while (i < argc && !(ft_strncmp(argv[i], "-", 1)))
+		while (i < argc && is_flag(argv[i])) 
 			++i;
 		if (i == argc)
 		{

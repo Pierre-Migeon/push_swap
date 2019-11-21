@@ -46,6 +46,8 @@ int	check_int(char *str)
 {
 	while (*str)
 	{
+		if (strncmp(str, "-", 1) == 0)
+			str++;
 		if (*str < '0' || *str > '9')
 			return (0);
 		str++;

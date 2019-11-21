@@ -5,7 +5,7 @@ int	check_input(int argc, char **argv)
         int i;
 
         i = 1;
-	while (!(ft_strncmp(argv[i], "-", 1)))
+	while (i < argc && is_flag(argv[i]))
 		i++;
         while (i < argc)
         {
@@ -39,9 +39,9 @@ int	*get_stack(int argc, char **argv)
 	int x;
 
 	i = 0;
-	while (!(ft_strncmp(argv[i + 1], "-", 1)))
+	while (i < argc && is_flag(argv[i + 1]))
 		i++;
-        if (!(stack = (int *)malloc(sizeof(int) * (argc - i - 1))))
+        if (!(stack = (int *)malloc(sizeof(int) * (argc - i))))
                 return (0);
         stack[0] = argc - i;
         x = 1;

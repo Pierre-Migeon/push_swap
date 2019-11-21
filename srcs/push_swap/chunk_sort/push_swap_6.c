@@ -45,9 +45,15 @@ void	sort_b(t_llist **stack_b, int **commands)
 
 void	sort_a(t_llist **stack_a, int **commands)
 {       
-        int max;
+	int max;
         int min;
-        
+
+	if (two_in(*stack_a))
+	{
+		if ((*stack_a)->val > (*stack_a)->next->val) 
+			list_swap(stack_a, commands, 0);
+		return;
+	}
         max = edge_indexes(*stack_a, 0);
         min = edge_indexes(*stack_a, max);
         if ((*stack_a)->index == min && (*stack_a)->last->index == max)

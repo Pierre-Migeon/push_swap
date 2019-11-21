@@ -120,5 +120,7 @@ int		shortest_path_4(t_llist *head, t_llist *target, int flag);
 int		should_shift_b(t_llist *a, t_llist *b, t_dir *dir);
 int		no_numbers_just_options(char **argv, int argc);
 void		print_stack(t_llist *a);
+int		is_flag(char *str);
+int     	two_in(t_llist *stack);
 
 #endif
