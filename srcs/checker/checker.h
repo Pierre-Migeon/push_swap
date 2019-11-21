@@ -51,5 +51,6 @@ int	perform_sort(int *commands, int *stack_a, t_params *params);
 int	grade_it(int i);
 int	main(int argc, char **argv);
 int     check_commands(int *commands);
+int	is_flag(char *str);
 
 #endif

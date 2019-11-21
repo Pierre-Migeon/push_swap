@@ -10,6 +10,8 @@ int	check_int(char *str)
 {
 	while (*str)
 	{
+		if (*str == '-')
+			str++;
 		if (*str < '0' || *str > '9')
 			return (1);
 		str++;
@@ -59,7 +61,7 @@ int	check_input(int argc, char **argv)
 	int start_args;
 
 	i = 1;
-	while((i < argc) && !(ft_strncmp(argv[i], "-", 1)))
+	while((i < argc) && is_flag(argv[i]))
 		++i;
 	if (i == argc)
 		return (-2);

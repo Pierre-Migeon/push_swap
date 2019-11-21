@@ -90,8 +90,6 @@ int	check_sorted(int *stack_a, int *stack_b, int *commands, int f)
 	free(stack_a);
 	free(stack_b);
 	free(commands);
-	if (*commands == 1000000)
-		printf("yeah I doubt you're every going to print this\n");
 	return (1);
 }
 
@@ -104,7 +102,7 @@ int	*get_stack(int argc, char **argv, int start_args, t_params *params)
 
 	i = 1;
 	params->print_list = (!(ft_strncmp(argv[i], "-p", 2))) ? 1 : 0;
-	while(!(ft_strncmp(argv[i], "-", 1)))
+	while(i < argc && is_flag(argv[i]))
 		++i;
 	stack_size = (start_args > 0) ? start_args : argc - i + 1;
 	if (!(stack = (int *)malloc(sizeof(int) * stack_size)))
