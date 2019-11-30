@@ -1,6 +1,7 @@
 COMPILER = gcc
 FLAGS = -Wall -Wextra -Werror
-SOURCES_1 = ./srcs/push_swap/multiple_algorithms/push_swap.c ./srcs/push_swap/multiple_algorithms/push_swap_2.c ./srcs/push_swap/multiple_algorithms/push_swap_3.c ./srcs/push_swap/multiple_algorithms/push_swap_4.c ./srcs/push_swap/multiple_algorithms/push_swap_5.c 
+#SOURCES_1 = ./srcs/push_swap/multiple_algorithms/push_swap.c ./srcs/push_swap/multiple_algorithms/push_swap_2.c ./srcs/push_swap/multiple_algorithms/push_swap_3.c ./srcs/push_swap/multiple_algorithms/push_swap_4.c ./srcs/push_swap/multiple_algorithms/push_swap_5.c 
+SOURCES_1 = ./srcs/push_swap/chunk_sort/*.c
 SOURCES_2 = ./srcs/checker/checker_1.c ./srcs/checker/checker_2.c ./srcs/checker/checker_3.c ./srcs/checker/command2int.c ./srcs/checker/checks.c ./srcs/checker/commands.c
 NAME_1 = push_swap
 NAME_2 = checker

@@ -116,7 +116,7 @@ int	*index_stack(int *stack)
         int     j = 0;
 
         if (!(out = (int *)malloc(sizeof(int) * stack[0])))
-                error();
+                exit(1);
         out[0] = stack[0];
         while (j < stack[0] - 1)
         {

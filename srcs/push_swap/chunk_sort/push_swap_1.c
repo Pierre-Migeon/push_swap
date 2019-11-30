@@ -70,12 +70,17 @@ int	no_numbers_just_options(char **argv, int argc)
 
 void	free_list(t_llist *stack)
 {
-	while (stack->next)
+	t_llist *current;
+	t_llist *next;
+
+	current = stack;
+	current->last->next = NULL;
+	while (current)
 	{
-			stack = stack->next;
-			free(stack->last);
+		next = current->next;
+		free(current);
+		current = next;
 	}
-	free(stack);
 }
 
 int	*push_swap(int *stack_a, int print)
@@ -87,10 +92,7 @@ int	*push_swap(int *stack_a, int print)
 	if (check_sorted(stack_a))
 		free_arrays(stack_a, commands);
 	order = make_order(stack_a);
-#ifndef DEBUG
-	free(stack_a);
-#endif
 	push_swap_chunks(order, &commands, print);
-	//free_list(order);
+	free_list(order);
 	return (commands);
 }

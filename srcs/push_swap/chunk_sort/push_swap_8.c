@@ -64,27 +64,6 @@ int	is_within_range(t_llist *stack_a, int *range)
 	return (0);
 }
 
-void	find_entry_point(t_llist **stack_a, t_llist **stack_b, int **commands)
-{
-	t_llist		*head;
-	int		i;
-
-	i = 0;
-	head = *stack_a;
-        while (head)
-        {
-		++i;
-		if (head->val > (*stack_b)->val)
-	  	{
-                        list_rotate(stack_a, commands, i);
-                        break;
-                }
-                head = head->next;
-                if (head->val == (*stack_a)->val)
-                        break;
-        }
-}
-
 int	correct_end(t_llist **stack_a, t_llist **stack_b, int **commands, int max)
 {
 	int		start;
@@ -92,16 +71,21 @@ int	correct_end(t_llist **stack_a, t_llist **stack_b, int **commands, int max)
 
 	dir = 0;
 	start = (*stack_a)->val;
-	find_entry_point(stack_a, stack_b, commands);
 	while ((*stack_a)->val != start || dir == 0)
 	{
 		if ((*stack_b)->index == max && (*stack_b)->val < (*stack_a)->last->val)
         		list_rotate(stack_a, commands, 2);
-		else if ((*stack_b)->index == max && ((*stack_a)->val != start || dir == 0) && max-- >= 0)
+		else if ((*stack_b)->index == max && max-- >= 0)
 			push_a(stack_a, stack_b, commands);
-		else if (((*stack_a)->val != start || dir == 0) && (dir = quickest_path_2(*stack_b, max)))
+		else if ((dir = quickest_path_2(*stack_b, max)))
 			list_rotate(stack_b, commands, dir);
 		dir++;
 	}
 	return (max);
 }
+
+
+
+//((*stack_a)->val != start || dir == 0) && max-- >= 0)
+//else if (((*stack_a)->val != start || dir == 0) && (dir = quickest_path_2(*stack_b, max)))
+

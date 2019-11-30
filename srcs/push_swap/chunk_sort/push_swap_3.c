@@ -16,7 +16,7 @@ t_llist *make_order(int *stack_a)
 
         i = 1;
         if (!(order = (t_llist *)malloc(sizeof(t_llist))))
-                error();
+                exit(1);
         indexes = index_stack(stack_a);
         head = order;
         while (i < stack_a[0])
@@ -25,7 +25,7 @@ t_llist *make_order(int *stack_a)
                 if (i < stack_a[0] - 1)
                 {
                         if (!(order->next = (t_llist *)malloc(sizeof(t_llist))))
-                                error();
+                                exit(1);
                         order = order->next;
                 }
                 else

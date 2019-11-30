@@ -42,7 +42,7 @@ int	*get_stack(int argc, char **argv)
 	while (i < argc && is_flag(argv[i + 1]))
 		i++;
         if (!(stack = (int *)malloc(sizeof(int) * (argc - i))))
-                return (0);
+                exit (1);
         stack[0] = argc - i;
         x = 1;
         while (x < stack[0])
@@ -58,7 +58,7 @@ int	*initialize_stack(void)
         int *out;
 
 	if (!(out = (int *)malloc(sizeof(int) * 1)))
-		return (0);
+		exit(1);
 	out[0] = 1;
         return (out);
 }
@@ -70,7 +70,7 @@ int	*push_end(int *commands, int option)
 
 	commands[0] += 1;
 	if (!(new_commands = (int *)malloc(sizeof(int) * commands[0])))
-		error();
+		exit(1);
 	i = -1;
 	while (++i < commands[0] - 1)
 		new_commands[i] = commands[i];

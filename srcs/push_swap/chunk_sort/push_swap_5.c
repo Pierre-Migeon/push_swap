@@ -2,13 +2,13 @@
 
 void	index_llist(t_llist *stack)
 {
+	t_llist 	*head;
+	int		*i_stack;
+	int		*indexes;
+	int		i;
+
 	if (!stack)
 		return;
-	t_llist *head;
-	int	*i_stack;
-	int	*indexes;
-	int	i;
-
 	i_stack = make_int_stack(stack);
 	indexes = index_stack(i_stack);
 	free(i_stack);
@@ -23,7 +23,6 @@ void	index_llist(t_llist *stack)
 	}
 	free(indexes);
 }
-
 
 int	edge_indexes(t_llist *stack, int ref_index)
 {

@@ -35,8 +35,9 @@ t_params	*get_params(int argc, char **argv)
 	t_params	*params;
 
 	if (!(params = (t_params *)malloc(sizeof(params) * 1)))
-		error();
+		exit(1);
 	params->print = 0;
+	params->winner = 0;
 	params->winner = 0;
 	i = 1;
 	while (i < argc)
@@ -45,8 +46,16 @@ t_params	*get_params(int argc, char **argv)
 		{
 			if (!(ft_strcmp(argv[i], "-w")))
 				params->winner++;
-			if (!(ft_strcmp(argv[i], "-p")))
+			else if (!(ft_strcmp(argv[i], "-p")))
 				params->print++;
+			else if (!(ft_strcmp(argv[i], "-v")))
+				params->visualize++;
+			else if (!(ft_isdigit(argv[i][1])))
+			{
+				write(1, "\n\tUsage: push_swap [-w] [-v] [-p] numbers_to_sort\n\n", 51);
+				free(params);
+                        	exit (0);
+			}
 		}
 		else
 			return (params);
@@ -58,23 +67,23 @@ t_params	*get_params(int argc, char **argv)
 int	main(int argc, char **argv)
 {
 	int 		*commands;
+	int		*stack_a_initial;
 	t_params 	*params;
 
-#ifndef DEBUG
 	if (argc < 2 || no_numbers_just_options(argv, argc))
 		return (0);
 	if (check_input(argc, argv))
 		error();
-#else 
-	//int array[25] = {25, 109, 16, 370, 270, 396, 238, 458, 352, 323, 308, 289, 338, 463, 281, 81, 223, 313, 251, 450, 280, 126, 465, 149, 123}; 
-	int array[3] = {3, 82, 68};
-
-	commands = push_swap(array, 0);
-#endif
-#ifndef DEBUG
 	params = get_params(argc, argv);
-	commands = push_swap(get_stack(argc, argv), params->print);
-#endif
-	ints_to_commands(commands, params->winner);
+	stack_a_initial = get_stack(argc, argv);
+	commands = push_swap(stack_a_initial, params->print);
+	if (params->visualize)
+		run_and_print(commands, stack_a_initial);
+	else
+	{
+		ints_to_commands(commands, params->winner);
+		free(stack_a_intial);
+	}
+	free(params);
 	return (0);
 }
