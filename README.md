@@ -14,9 +14,6 @@ Usage:
 	checker [-p] sequence_of_numbers sequence_of_commands
 	 (use -p to print the sequence of numbers that results from sorting the list in the manner requested)
 
-Example:
-
-![example](https://user-images.githubusercontent.com/8321639/68898697-d1c6d380-06e4-11ea-9628-ed01dd13e3d3.png)
 
 Running in Visual + color mode:
 
@@ -24,6 +21,10 @@ Running in Visual + color mode:
 
 
 If push_swap successfully produces correct output, then the checker program will print "OK" to the terminal, or "KO" otherwise. Incorrect input is not tolerated, and will result in "Error" being printed to stdout. Examples of incorrect input to either push_swap or checker include duplicates in the list to be sorted, non-integers, and non-numbers, or for checker, incorrectly typed or non-existent commands. Commands may be piped into checker, or they may be typed directly on the terminal. 
+
+Example:
+
+![example](https://user-images.githubusercontent.com/8321639/68898697-d1c6d380-06e4-11ea-9628-ed01dd13e3d3.png)
 
 9 commands may be used to sort the list, which is initially entirely stored in stack_a. The 9 commands are essentially 3 different operations performed on either stack_a, stack_b, or on both. The first operation is swap, which exchanges the first and second values in either stack_a (command sa), stack_b (sb) or both (ss). The second operation is to rotate the stack, which moves the first element of the stack to end of the stack. This operation becomes ra (rotate a), rb (rotate b), or rr (rotate both). Finally, you may reverse rotate the stacks, which moves the last element of the stack to the first position of the stack, and may be performed on stack_a (rra), stack_b (rrb) or both (rrr).
 
