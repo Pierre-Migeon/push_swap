@@ -5,16 +5,22 @@ This is the 42 project, push_swap, a part of the algorithms branch. The goal was
 
 Usage:
 
-	push_swap [-w] sequence_of_numbers
+	push_swap [-w] [-v] [-c] [-p] sequence_of_numbers
 	 (use -w to print the shortest algorithm by name after run)
+	 (use -v for visualizer mode)
+	 (use -c for colored visualizer mode)
+	 (use -p to print sorted list)
 
 	checker [-p] sequence_of_numbers sequence_of_commands
 	 (use -p to print the sequence of numbers that results from sorting the list in the manner requested)
 
 Example:
 
-
 ![example](https://user-images.githubusercontent.com/8321639/68898697-d1c6d380-06e4-11ea-9628-ed01dd13e3d3.png)
+
+Running in Visual + color mode:
+
+![visual mode](https://user-images.githubusercontent.com/8321639/69909034-3a7ea300-13a9-11ea-9d10-152a145615b8.png)
 
 
 If push_swap successfully produces correct output, then the checker program will print "OK" to the terminal, or "KO" otherwise. Incorrect input is not tolerated, and will result in "Error" being printed to stdout. Examples of incorrect input to either push_swap or checker include duplicates in the list to be sorted, non-integers, and non-numbers, or for checker, incorrectly typed or non-existent commands. Commands may be piped into checker, or they may be typed directly on the terminal. 
