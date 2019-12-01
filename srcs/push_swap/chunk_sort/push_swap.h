@@ -14,6 +14,7 @@ typedef struct		s_params
 	int		print;
 	int		winner;
 	int		visualize;
+	int		color;
 }			t_params;
 
 typedef struct	s_dir
@@ -122,9 +123,17 @@ int		should_shift_b(t_llist *a, t_llist *b, t_dir *dir);
 int		no_numbers_just_options(char **argv, int argc);
 void		print_stack(t_llist *a);
 int		is_flag(char *str);
-int     	two_in(t_llist *stack);
+int		two_in(t_llist *stack);
 int		numlen(int num);
 int		get_offset(int *stack);
-void		run_and_print(int *commands, int *stack);
+void		run_and_print(int *commands, int *stack, int color);
+void		free_list(t_llist *stack);
+void		write_line(int a, int b, int offset, int print_code, int color);
+void		print_boxes(t_llist *stack_a, t_llist *stack_b, int offset, int color);
+void		run_commands(t_llist **stack_a, t_llist **stack_b, int command);
+char		*long_command_convert(int i);
+void		write_header(int offset);
+void		ft_putstr_color(char *str, int code);
+int		color_code(int command);
 
 #endif

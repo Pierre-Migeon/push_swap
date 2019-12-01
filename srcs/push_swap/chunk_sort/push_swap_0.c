@@ -29,6 +29,20 @@ void	print_stack(t_llist *a)
 	write(1, "\n", 1);
 }
 
+int set_zero(t_params *params)
+{
+        params->print = 0;
+        params->winner = 0;
+        params->winner = 0;
+        params->color = 0;
+	return (1);
+}
+
+int	not_command(char *c)
+{
+	return ((ft_strcmp(c, "-w") == 0) || (ft_strcmp(c, "-p") == 0) || (ft_strcmp(c, "-v") == 0) || (ft_strcmp(c, "-c") == 0));
+}
+
 t_params	*get_params(int argc, char **argv)
 {
 	int i;
@@ -36,23 +50,18 @@ t_params	*get_params(int argc, char **argv)
 
 	if (!(params = (t_params *)malloc(sizeof(params) * 1)))
 		exit(1);
-	params->print = 0;
-	params->winner = 0;
-	params->winner = 0;
-	i = 1;
+	i = set_zero(params);
 	while (i < argc)
 	{
 		if (!(ft_strncmp(argv[i], "-", 1)))
 		{
-			if (!(ft_strcmp(argv[i], "-w")))
-				params->winner++;
-			else if (!(ft_strcmp(argv[i], "-p")))
-				params->print++;
-			else if (!(ft_strcmp(argv[i], "-v")))
-				params->visualize++;
-			else if (!(ft_isdigit(argv[i][1])))
+			params->winner += (!(ft_strcmp(argv[i], "-w")));
+			params->print += (!(ft_strcmp(argv[i], "-p")));
+			params->visualize += (!(ft_strcmp(argv[i], "-v")));
+			params->color += (!(ft_strcmp(argv[i], "-c")));
+			if (not_command(argv[i]) == 0 && !(ft_isdigit(argv[i][1])))
 			{
-				write(1, "\n\tUsage: push_swap [-w] [-v] [-p] numbers_to_sort\n\n", 51);
+				write(1, "\n\tUsage: push_swap [-w] [-v] [-c] [-p] numbers_to_sort\n\n", 56);
 				free(params);
                         	exit (0);
 			}
@@ -78,11 +87,11 @@ int	main(int argc, char **argv)
 	stack_a_initial = get_stack(argc, argv);
 	commands = push_swap(stack_a_initial, params->print);
 	if (params->visualize)
-		run_and_print(commands, stack_a_initial);
+		run_and_print(commands, stack_a_initial, params->color);
 	else
 	{
 		ints_to_commands(commands, params->winner);
-		free(stack_a_intial);
+		free(stack_a_initial);
 	}
 	free(params);
 	return (0);

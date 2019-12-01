@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/time.h>
-#include "../../includes/libft/libft.h"
+#include "../../../includes/libft/libft.h"
 
 long long factorial(long long i)
 {
@@ -98,11 +98,11 @@ char	*array_to_string(int *array, int members)
 char *make_string(int *array, int members, int mode)
 {
 	char Buffer[2000];
-	char str_a[] = "../../push_swap ";
+	char str_a[] = "./push_swap ";
 	char *str_b;
 	str_b = array_to_string(array, members);
 	char str_c[9] = " | wc -l";
-	char str_d[] = " | ../../checker ";
+	char str_d[] = " | ./checker ";
 	char *str_e;
 
 	int length = 0;
@@ -124,7 +124,6 @@ char *make_string(int *array, int members, int mode)
 int	main(int argc, char **argv)
 {
 	int x, y;
-	long long i;
 	int **o_array = NULL;
 	char *str;
 

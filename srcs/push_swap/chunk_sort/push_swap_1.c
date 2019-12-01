@@ -59,7 +59,7 @@ int	no_numbers_just_options(char **argv, int argc)
 			++i;
 		if (i == argc)
 		{
-			write(1, "\n\tUsage: push_swap [-w] [numbers to sort]\n\n", 43);
+			write(1, "\n\tUsage: push_swap [-w] [-v] [-c] [-p] numbers_to_sort\n\n", 56);
 			return (1);
 		}
 		else

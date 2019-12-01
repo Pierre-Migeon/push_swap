@@ -72,24 +72,30 @@ void	write_header(int offset)
 	write(1, "--\n", 3);
 }
 
-void	write_line(int a, int b, int offset, int print_code)
+void	write_line(int a, int b, int offset, int print_code, int color)
 {
 	int 	spaces;
 
 	spaces = (print_code == 2) ? 0 : numlen(a);
 	write(1, "| ", 2);
+	if (color)
+		write(1, "\033[32m", 5);
 	write(1, ft_itoa(a), spaces);
+	write(1, "\033[0m", 4);
 	for(int i = 0; i < offset - spaces; i++)
 		write(1, " ", 1);
 	write(1,  " | ", 3);
 	spaces = (print_code == 1) ? 0 : numlen(b);
+	if (color)
+		write(1, "\033[34m", 5);
 	write(1, ft_itoa(b), spaces);
+	write(1, "\033[0m", 4);
 	for(int i = 0; i < offset - spaces; i++)
 		write(1, " ", 1);	
 	write(1, " |\n", 3);
 }
 
-void	print_boxes(t_llist *stack_a, t_llist *stack_b, int offset)
+void	print_boxes(t_llist *stack_a, t_llist *stack_b, int offset, int color)
 {
 	int head_a[2] = {0};
 	int head_b[2] = {0};
@@ -105,7 +111,7 @@ void	print_boxes(t_llist *stack_a, t_llist *stack_b, int offset)
 	{
 		print_code = (head_b[1] == 1) ? 1 : print_code;
 		print_code = (head_a[1] == 1) ? 2 : print_code;
-		write_line(stack_a->val, stack_b->val, offset, print_code);
+		write_line(stack_a->val, stack_b->val, offset, print_code, color);
 		stack_a = stack_a->next;
 		stack_b = stack_b->next;
 		if (stack_a->val == head_a[0])
@@ -145,7 +151,24 @@ void	run_commands(t_llist **stack_a, t_llist **stack_b, int command)
 	free(dummy_commands);
 }
 
-void	run_and_print(int *commands, int *stack)
+void	ft_putstr_color(char *str, int code)
+{
+	if (code == 0)
+		write(1, "\033[1m", 4);
+	if (code == 1)
+		write(1, "\033[32m", 5);
+	if (code == 2)
+		write(1, "\033[34m", 5);
+	ft_putstr(str);
+	write(1, "\033[0m", 4);
+}
+
+int	color_code(int command)
+{
+	return ((command >= 0 && command <= 2) ? 1 : 2);
+}
+
+void	run_and_print(int *commands, int *stack, int color)
 {
 	t_llist		*stack_a;
 	t_llist         *stack_b;
@@ -153,17 +176,23 @@ void	run_and_print(int *commands, int *stack)
 	int		offset;
 
 	i = 1;
-	stack_a = make_order(stack);	
+	stack_a = make_order(stack);
 	stack_b = NULL;
 	offset = get_offset(stack);
 	free(stack);
-	write(1, "Start:\n", 7);
-	print_boxes(stack_a, stack_b, offset);
+	if (color)
+		ft_putstr_color("Start:\n", 0);
+	else
+		write(1, "Start:\n", 7);
+	print_boxes(stack_a, stack_b, offset, color);
 	while (i < commands[0])
 	{
 		run_commands(&stack_a, &stack_b, commands[i]);
-		ft_putstr(long_command_convert(commands[i]));
-		print_boxes(stack_a, stack_b, offset);
+		if (color)
+			ft_putstr_color(long_command_convert(commands[i]), color_code(commands[i]));
+		else
+			ft_putstr(long_command_convert(commands[i]));
+		print_boxes(stack_a, stack_b, offset, color);
 		++i;
 	}
 	free_list(stack_a);
