@@ -101,7 +101,9 @@ char *make_string(int *array, int members, int mode)
 	char str_a[] = "./push_swap ";
 	char *str_b;
 	str_b = array_to_string(array, members);
-	char str_c[9] = " | wc -l";
+	char str_f[1000];
+	snprintf(str_f, 1000, "| wc -l | tr -d '^ ' | xargs echo 1 %i | tr ' ' '\t'", members);
+	char str_c[] = " | wc -l ";
 	char str_d[] = " | ./checker ";
 	char *str_e;
 
@@ -111,6 +113,8 @@ char *make_string(int *array, int members, int mode)
 
 	if (mode == 1)
         	length += sprintf(Buffer+length, "%s", str_c);
+	else if (mode == 3)
+		length += sprintf(Buffer+length, "%s", str_f);
 	else
 	{
                 length += sprintf(Buffer+length, "%s", str_d);
@@ -123,23 +127,25 @@ char *make_string(int *array, int members, int mode)
 
 int	main(int argc, char **argv)
 {
-	int x, y;
+	int x, y, mode;
 	int **o_array = NULL;
 	char *str;
 
 	if (argc < 3)
 	{
-		printf ("Usage:\n ./generate_push_swap_tests [list size] [number of tests] [ -1 for number of moves summary | -2 to test using checker]\n");
+		printf ("Usage:\n ./generate_push_swap_tests [list size] [number of tests] [ -1 for number of moves summary | -2 to test using checker | -3 for benchmarking mode]\n");
 		exit(0);
 	}
 	x = ft_atoi(argv[1]);
 	y = ft_atoi(argv[2]);
+	mode = ft_atoi(argv[3]);
 	o_array = random_list(x, y);
 
 	for (int j = 0; j < y; j++)
         {
-		str = make_string(o_array[j], x, ft_atoi(argv[3]));
-		printf ("%s\n", str);		
+		str = make_string(o_array[j], x, mode);
+		if (mode != 3)
+			printf ("%s\n", str);
 		system(str);
 		free(o_array[j]);
 	}
