@@ -2,7 +2,8 @@
 
 int	list_swap(t_llist **stack, int **commands, int i)
 {
-	*commands = push_end(*commands, i);
+	if (i != -1)
+		*commands = push_end(*commands, i);
 	(*stack)->last->next = (*stack)->next;
 	(*stack)->next->last = (*stack)->last;
 	(*stack)->next = (*stack)->next->next;

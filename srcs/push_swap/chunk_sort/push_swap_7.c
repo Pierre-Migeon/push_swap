@@ -1,5 +1,21 @@
 #include "push_swap.h"
 
+void    swap_both(t_llist **stack_a, t_llist **stack_b, int **commands)
+{
+        list_swap(stack_a, commands, 8);
+        list_swap(stack_b, commands, -1);
+}
+
+int     both_swap_worthy(t_llist *stack_a, t_llist *stack_b)
+{
+        if (!stack_a || !stack_b)
+                return (0);
+        if (stack_a->val > stack_a->next->val)
+                if (stack_b->val < stack_b->next->val)
+                        return (1);
+        return (0);
+}
+
 void	push_swap_chunks_stack_b(t_llist **stack_a, t_llist **stack_b, int **commands, int print)
 {
 	int max;
@@ -15,6 +31,8 @@ void	push_swap_chunks_stack_b(t_llist **stack_a, t_llist **stack_b, int **comman
         max = edge_indexes(*stack_b, 0);
         while (*stack_b)
         {
+		if (both_swap_worthy(*stack_a, *stack_b))
+			swap_both(stack_a, stack_b, commands);
                 if ((*stack_b)->index == max && (*stack_b)->val < (*stack_a)->val && (max-- >= 0))
                         push_a(stack_a, stack_b, commands);
                 else if ((*stack_b)->index == max && (*stack_b)->val > (*stack_a)->val)
@@ -37,6 +55,8 @@ void	push_swap_chunks(t_llist *stack_a, int **commands, int print)
 		range = find_range(stack_a);
 		while (is_within_range(stack_a, range) && stack_a_too_big(stack_a))
                 {
+			if (both_swap_worthy(stack_a, stack_b))
+				swap_both(&stack_a, &stack_b, commands);
 			if (stack_a->index >= range[0] && stack_a->index < range[1])
 				push_b(&stack_a, &stack_b, commands);
 			else if ((dir = quickest_path_chunks(stack_a, range)))

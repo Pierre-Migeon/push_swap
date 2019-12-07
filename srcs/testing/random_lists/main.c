@@ -102,7 +102,7 @@ char *make_string(int *array, int members, int mode)
 	char *str_b;
 	str_b = array_to_string(array, members);
 	char str_f[1000];
-	snprintf(str_f, 1000, "| wc -l | tr -d '^ ' | xargs echo 1 %i | tr ' ' '\t'", members);
+	snprintf(str_f, 1000, "| wc -l | tr -d '^ ' | xargs echo 2 %i | tr ' ' '\t'", members);
 	char str_c[] = " | wc -l ";
 	char str_d[] = " | ./checker ";
 	char *str_e;

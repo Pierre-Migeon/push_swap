@@ -95,7 +95,6 @@ void	push_b(t_llist **stack_a, t_llist **stack_b, int **commands)
         *stack_b = (*stack_b)->last;
 }
 
-
 t_llist *label(t_llist *head, t_hash best)
 {
         t_llist         *ref;
